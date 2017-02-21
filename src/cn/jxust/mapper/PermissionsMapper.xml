@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="JDMapper">
+	<resultMap type="com.kingdee.entity.OrderEnd" id="orderEndList">
+		<result property="id" column="id" />
+		<result property="orderNumber" column="order_number" />
+		<result property="goodsName" column="goods_name" />
+		<result property="stageType" column="stage_type" />
+		<result property="rid" column="rid" />
+		<result property="outCome" column="outcome" />
+		<result property="produceTime" column="produce_time" />
+		<result property="payOffTime" column="pay_off_time" />
+		<result property="number" column="number" />
+		<result property="totalNumber" column="total_number" />
+		<result property="orderState" column="order_state" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<resultMap type="com.kingdee.entity.OrderStay" id="orderStayList">
+		<result property="id" column="id" />
+		<result property="orderNumber" column="order_number" />
+		<result property="goodsName" column="goods_name" />
+		<result property="stageType" column="stage_type" />
+		<result property="rid" column="rid" />
+		<result property="outCome" column="outcome" />
+		<result property="stagesCost" column="stagesCost" />
+		<result property="amount" column="amount" />
+		<result property="newBalance" column="newBalance" />
+		<result property="produceTime" column="produce_time" />
+		<result property="payTime" column="pay_time" />
+		<result property="number" column="number" />
+		<result property="totalNumber" column="total_number" />
+		<result property="surplusAmount" column="surplus_amount" />
+		<result property="surplusNumber" column="surplus_number" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+
+	<resultMap type="com.kingdee.entity.OrderStageDetail" id="orderStageList">
+		<result property="id" column="id" />
+		<result property="orderNumber" column="order_number" />
+		<result property="rid" column="rid" />
+		<result property="stagesCost" column="stagesCost" />
+		<result property="amount" column="amount" />
+		<result property="number" column="number" />
+		<result property="newBalance" column="newBalance" />
+		<result property="payTime" column="pay_time" />
+		<result property="repayState" column="repay_state" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<resultMap type="com.kingdee.entity.JdbtBillInfo" id="jdbtBillList">
+		<result property="id" column="id" />
+		<result property="month" column="month" />
+		<result property="rid" column="rid" />
+		<result property="creditLimit" column="credit_limit" />
+		<result property="limitAvail" column="limit_avail" />
+		<result property="paymentDueDate" column="payment_due_date" />
+		<result property="stayPayment" column="stay_payment" />
+		<result property="sevenPayment" column="seven_payment" />
+		<result property="creditScore" column="credit_score" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<resultMap type="com.kingdee.entity.OrderDetail" id="orderDetailList">
+		<result property="id" column="id" />
+		<result property="rid" column="rid" />
+		<result property="orderNumber" column="order_number" />
+		<result property="consignee" column="consignee" />
+		<result property="address" column="address" />
+		<result property="telephone" column="telephone" />
+		<result property="outcome" column="outcome" />
+		<result property="orderTime" column="order_time" />
+		<result property="invoiceType" column="invoice_type" />
+		<result property="invoiceContent" column="invoice_content" />
+		<result property="invoiceHeader" column="invoice_header" />
+		<result property="orderState" column="order_state" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+	
+	<resultMap id="jdUserDetail" type="com.kingdee.entity.JdUserDetail">
+		<result property="id" column="id"/>
+		<result property="loginName" column="login_name"/>
+		<result property="bankType" column="bank_type"/>
+		<result property="userName" column="user_name"/>
+		<result property="sex" column="sex"/>
+		<result property="phone" column="phone"/>
+		<result property="email" column="email"/>
+		<result property="qq" column="qq"/>
+		<result property="wechat" column="wechat"/>
+		<result property="idCardNo" column="idcard_no"/>
+		<result property="certificaTime" column="certifica_time"/>
+		<result property="certificaMode" column="certifica_mode"/>
+		<result property="userLevel" column="user_level"/>
+		<result property="userType" column="user_type"/>
+		<result property="updateTime" column="update_time"/>
+		<result property="createTime" column="create_time"/>
+	</resultMap>
+	
+	<resultMap id="bindCard" type="com.kingdee.entity.BindCard">
+		<result property="id" column="id" />
+		<result property="rid" column="rid" />
+		<result property="type" column="type" />
+		<result property="bankCardNo" column="bank_card_no" />
+		<result property="bankName" column="bank_name" />
+		<result property="houseHolder" column="house_holder" />
+		<result property="telephone" column="telephone" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+	</resultMap>
+
+	<resultMap id="addressResultMap" type="com.kingdee.entity.jd.JDAddress">
+		<result property="id" column="id"></result>
+		<result property="consignee" column="consignee"></result>
+		<result property="mobilePhone" column="mobile_phone"></result>
+		<result property="mailBox" column="mail_box"></result>
+		<result property="telephone" column="telephone"></result>
+		<result property="zipCode" column="zip_code"></result>
+		<result property="region" column="region"></result>
+		<result property="address" column="address"></result>
+		<result property="addressType" column="address_type"></result>
+		<result property="remarks" column="remarks"></result>
+
+	</resultMap>
+
+	<resultMap type="com.kingdee.entity.OrderDetail" id="orderDetailWithGoods">
+		<result property="id" column="id" />
+		<result property="rid" column="rid" />
+		<result property="orderNumber" column="order_number" />
+		<result property="consignee" column="consignee" />
+		<result property="address" column="address" />
+		<result property="telephone" column="telephone" />
+		<result property="outcome" column="outcome" />
+		<result property="orderTime" column="order_time" />
+		<result property="invoiceType" column="invoice_type" />
+		<result property="invoiceContent" column="invoice_content" />
+		<result property="invoiceHeader" column="invoice_header" />
+		<result property="orderState" column="order_state" />
+		<result property="updateTime" column="update_time" />
+		<result property="createTime" column="create_time" />
+		<collection property="goods" ofType="com.kingdee.entity.GoodsDetail">
+			<result property="goodsName" column="goods_name"></result>
+			<result property="price" column="price"></result>
+			<result property="goodsNumber" column="goods_number"></result>
+		</collection>
+	</resultMap>
+
+	<insert id="addJdUserDetail">
+		insert into
+		jduser_detail (login_name, bank_type, user_name, sex, phone, email, qq, wechat, idcard_no,
+		 certifica_time, certifica_mode, user_level, user_type, update_time, create_time)
+		 VALUES
+		 (#{jdUserDetail.loginName}, #{jdUserDetail.bankType}, #{jdUserDetail.userName}, #{jdUserDetail.sex},
+		 #{jdUserDetail.phone}, #{jdUserDetail.email}, #{jdUserDetail.qq}, #{jdUserDetail.wechat}, #{jdUserDetail.idCardNo},
+		 #{jdUserDetail.certificaTime}, #{jdUserDetail.certificaMode}, #{jdUserDetail.userLevel}, #{jdUserDetail.userType}, now(), now())
+	</insert>
+
+	<update id="updateJdUserDetail">
+		update
+		jduser_detail
+		set
+		
+		update_time=NOW()
+		<if test="jdUserDetail.userName != null">
+          <![CDATA[,user_name=#{jdUserDetail.userName}]]>
+		</if>
+		<if test="jdUserDetail.sex != null">
+          <![CDATA[,sex=#{jdUserDetail.sex}]]>
+		</if>
+		<if test="jdUserDetail.phone != null">
+          <![CDATA[,phone=#{jdUserDetail.phone}]]>
+		</if>
+		<if test="jdUserDetail.email != null">
+          <![CDATA[,email=#{jdUserDetail.email}]]>
+		</if>
+		<if test="jdUserDetail.qq != null">
+          <![CDATA[,qq=#{jdUserDetail.qq}]]>
+		</if>
+
+		<if test="jdUserDetail.wechat != null">
+          <![CDATA[,wechat=#{jdUserDetail.wechat}]]>
+		</if>
+		<if test="jdUserDetail.idCardNo != null">
+          <![CDATA[,idcard_no=#{jdUserDetail.idCardNo}]]>
+		</if>
+		<if test="jdUserDetail.certificaTime != null">
+          <![CDATA[,certifica_time=#{jdUserDetail.certificaTime}]]>
+		</if>
+
+		<if test="jdUserDetail.certificaMode != null">
+          <![CDATA[,certifica_mode=#{jdUserDetail.certificaMode}]]>
+		</if>
+
+		<if test="jdUserDetail.userLevel != null">
+          <![CDATA[,user_level=#{jdUserDetail.userLevel}]]>
+		</if>
+
+		<if test="jdUserDetail.userType != null">
+          <![CDATA[,user_Type=#{jdUserDetail.userType}]]>
+		</if>
+		where
+		login_name = #{jdUserDetail.loginName} and bank_type =#{jdUserDetail.bankType}
+	</update>
+
+
+	<insert id="addBindCards">
+		insert INTO
+		bind_card(rid, type, bank_card_no, bank_name, house_holder, telephone, update_time, create_time)
+		VALUES 
+		<foreach collection="bindCards" item="bindCard" separator=",">
+			(#{bindCard.rid}, #{bindCard.type}, #{bindCard.bankCardNo}, #{bindCard.bankName}, #{bindCard.houseHolder}, #{bindCard.telephone}, now(), now())
+		</foreach>
+	</insert>
+	
+	<insert id="addOrderStageEnds">
+		insert into
+		order_stage_end(order_number,rid,stagesCost,amount,newBalance,pay_time,number,repay_state,update_time,create_time)
+		values
+		<foreach collection="orderStages" item="orderStage" separator=",">
+			(#{orderStage.orderNumber},#{orderStage.rid},#{orderStage.stagesCost},#{orderStage.amount},#{orderStage.newBalance},#{orderStage.payTime},#{orderStage.number},#{orderStage.repayState},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<insert id="addOrderStageStays">
+		insert into
+		order_stage_stay(order_number,rid,stagesCost,amount,newBalance,pay_time,number,repay_state,update_time,create_time)
+		values
+		<foreach collection="orderStages" item="orderStage" separator=",">
+			(#{orderStage.orderNumber},#{orderStage.rid},#{orderStage.stagesCost},#{orderStage.amount},#{orderStage.newBalance},#{orderStage.payTime},#{orderStage.number},#{orderStage.repayState},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<insert id="addOrderEnds">
+		insert into
+		order_end(order_number,goods_name,stage_type,rid,outcome,produce_time,pay_off_time,number,total_number,order_state,update_time,create_time)
+		values
+		<foreach collection="orderEnds" item="orderEnd" separator=",">
+			(#{orderEnd.orderNumber},#{orderEnd.goodsName},#{orderEnd.stageType},#{orderEnd.rid},#{orderEnd.outCome},#{orderEnd.produceTime},#{orderEnd.payOffTime},#{orderEnd.number},#{orderEnd.totalNumber},#{orderEnd.orderState},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<insert id="addOrderStays">
+		insert into
+		order_stay(order_number,goods_name,stage_type,rid,outcome,stagesCost,amount,newBalance,produce_time,pay_time,number,total_number,surplus_number,surplus_amount,update_time,create_time)
+		values
+		<foreach collection="orderStays" item="orderStay" separator=",">
+			(#{orderStay.orderNumber},#{orderStay.goodsName},#{orderStay.stageType},#{orderStay.rid},#{orderStay.outCome},#{orderStay.stagesCost},#{orderStay.amount},#{orderStay.newBalance},#{orderStay.produceTime},
+			#{orderStay.payTime},#{orderStay.number},#{orderStay.totalNumber},#{orderStay.surplusNumber},#{orderStay.surplusAmount},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<update id="removeOrderStageStay">
+		delete from order_stage_stay where rid=#{rid} and
+		order_number=#{order_number}
+	</update>
+
+
+	<update id="removeOrderStay">
+		delete from order_end where rid=#{rid}
+
+		and
+		order_number=#{order_number}
+	</update>
+	<!-- <update id="removeOrderStayList" > delete from order_stay where rid=#{rid} 
+		<if test="orderEnd.orderNumber != null"> <![CDATA[ and order_number=#{orderEnd.orderNumber}]]> 
+		</if> <if test="orderStay.orderNumber != null"> <![CDATA[ and order_number=#{orderStay.orderNumber}]]> 
+		</if> <if test="orderStage.orderNumber != null"> <![CDATA[ and order_number=#{orderStage.orderNumber}]]> 
+		</if> <if test="orderStage.orderNumber != null"> <![CDATA[ and order_number=#{orderStage.orderNumber}]]> 
+		</if> </update> -->
+
+	<update id="removeOrderStayList">
+		delete from order_stay where rid=#{rid} and order_number in
+		<foreach collection="orderStays" index="index" item="orderStay"
+			open="(" separator="," close=")">
+			#{orderStay.orderNumber}
+		</foreach>
+	</update>
+	
+	<update id="removeBindCards">
+		delete from bind_card where rid = #{rid}
+	</update>
+
+
+	<select id="queryOrderEnds" resultMap="orderEndList">
+		select * from order_end
+		where rid=#{orderEnd.rid}
+
+	</select>
+
+	<select id="queryOrderStays" resultMap="orderStayList">
+		select * from order_stay
+		where rid=#{orderStay.rid}
+
+	</select>
+
+	<select id="queryOrderStageStayList" resultMap="orderStageList">
+		select * from
+		order_stage_stay where rid=#{orderStage.rid}
+
+	</select>
+
+	<select id="queryOrderStageEndList" resultMap="orderStageList">
+		select * from
+		order_stage_end where rid=#{orderStage.rid}
+
+	</select>
+
+	<select id="queryJdbtBills" resultMap="jdbtBillList">
+		select * from
+		jdbt_bill_info where rid=#{rid} and `month` = '000000'
+
+	</select>
+
+
+	<insert id="addOrderEnd" useGeneratedKeys="true" keyProperty="bankUser.id">
+		insert ignore into
+		goods_address(
+		consignee,
+		mobile_phone,
+		mail_box,
+		rid,
+		telephone,
+		zip_code,
+		region,
+		address,
+		address_type,
+		remarks,
+		update_time,
+		create_time
+		)
+		values(
+		#{goodsAddress.consignee},
+		#{goodsAddress.mobilePhone},
+		#{goodsAddress.mailBox},
+		#{goodsAddress.rid},
+		#{goodsAddress.telephone},
+		#{goodsAddress.zipCode},
+		#{goodsAddress.region},
+		#{goodsAddress.address},
+		#{goodsAddress.addressType},
+		#{goodsAddress.remarks},
+		NOW(),
+		NOW())
+	</insert>
+
+
+
+
+
+	<insert id="addJdbtBill">
+		insert ignore into
+		jdbt_bill_Info(
+		rid,
+		month,
+		credit_limit,
+		limit_avail,
+		payment_due_date,
+		stay_payment,
+		seven_payment,
+		credit_score,
+		update_time,
+		create_time
+		)
+		values(
+		#{jdbtBill.rid},
+		#{jdbtBill.month},
+		#{jdbtBill.creditLimit},
+		#{jdbtBill.limitAvail},
+
+		#{jdbtBill.paymentDueDate},
+		#{jdbtBill.stayPayment},
+		#{jdbtBill.sevenPayment},
+		#{jdbtBill.creditScore},
+		NOW(),
+		NOW())
+	</insert>
+
+	<update id="updateJdbtBill">
+		update
+		jdbt_bill_Info
+		set
+		credit_limit=#{jdbtBill.creditLimit},
+		limit_avail=#{jdbtBill.limitAvail},
+		payment_due_date=#{jdbtBill.paymentDueDate},
+		stay_payment=#{jdbtBill.stayPayment},
+		seven_payment=#{jdbtBill.sevenPayment},
+		credit_score=#{jdbtBill.creditScore},
+		month=#{jdbtBill.month}
+		,update_time=NOW()
+		where
+		rid=#{jdbtBill.rid} and month=#{jdbtBill.month}
+	</update>
+
+
+	<insert id="addGoodsDetails">
+		insert ignore into
+		goods_detail(order_number,rid,price,goods_name,goods_number,update_time,create_time)
+		values
+		<foreach collection="goodsDetails" item="goodsDetail" separator=",">
+			(#{goodsDetail.orderNumber},#{goodsDetail.rid},#{goodsDetail.price},#{goodsDetail.goodsName},#{goodsDetail.goodsNumber},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<insert id="addOrderDetails">
+		insert ignore into
+		order_detail(order_number,consignee,address,telephone,rid,outcome,order_time,invoice_type,invoice_content,invoice_header,order_state,update_time,create_time)
+		values
+		<foreach collection="orderDetailList" item="orderDetail"
+			separator=",">
+			(#{orderDetail.orderNumber},#{orderDetail.consignee},#{orderDetail.address},#{orderDetail.telephone},#{orderDetail.rid},
+			#{orderDetail.outcome},#{orderDetail.orderTime},#{orderDetail.invoiceType},#{orderDetail.invoiceContent},#{orderDetail.invoiceHeader},#{orderDetail.orderState},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<select id="queryOrderDetails" resultMap="orderDetailList">
+		select * from
+		order_detail where rid=#{rid}
+	</select>
+
+
+	<insert id="addBindCard">
+		insert into
+		bind_card(rid,type,bank_card_no,bank_name,house_holder,telephone,update_time,create_time)
+		values
+		<foreach collection="bindCards" item="bindCard" separator=",">
+			(#{bindCard.rid},#{bindCard.type},#{bindCard.bankCardNo},#{bindCard.bankName},#{bindCard.houseHolder},#{bindCard.telephone},NOW(),NOW())
+		</foreach>
+	</insert>
+
+	<select id="getUserInfo" resultMap="jdUserDetail">
+		select * from jduser_detail where login_name = #{loginName}
+	</select>
+
+	<select id="getBindCardInfoByLoginName" resultMap="bindCard">
+		select * from bind_card where rid in(select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+	</select>
+
+	<select id="getAddressListByLoginName" resultMap="addressResultMap">
+		select * from goods_address where rid in (select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+	</select>
+
+	<select id="getOrderListByLoginName" resultMap="orderDetailWithGoods">
+		select od.order_number,od.consignee,od.address,od.telephone,od.outcome,od.order_time,
+		od.invoice_type,od.invoice_content,od.invoice_header,od.order_state,gd.price,gd.price,gd.goods_name,
+		gd.goods_number from order_detail od
+		left join goods_detail gd on od.order_number = gd.order_number and od.rid = gd.rid
+		where od.rid in  (select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+	</select>
+
+	<select id="getJdbtBillsByLoginName" resultMap="jdbtBillList">
+		select * from jdbt_bill_info where rid in(select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+		<if test="month != null and month != ''">
+			and month = #{month}
+		</if>
+	</select>
+
+	<select id="getJdbtEndOrdersByLoginName" resultMap="orderEndList">
+		select * from order_end where rid in (select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+	</select>
+
+	<select id="getJdbtStayOrdersByLoginName" resultMap="orderStayList">
+		select * from order_stay where rid in (select id from bank_card where login_name = #{loginName} and bank_type = #{bankType})
+	</select>
+</mapper>

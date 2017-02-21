@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="CreditCardMapper">
+
+    <resultMap type="com.kingdee.web.entity.CardRecord" id="creditCardRecordList">
+    	<result column="id" property="transId"/>
+    	<result column="time" property="transDate"/>
+    	<result column="cardNum" property="cardNum"/>
+    	<result column="currency" property="currency"/>
+    	<result column="income" property="income"/>
+		<result column="outcome" property="outcome"/>
+		<result column="balance" property="balance"/>
+		<result column="summary" property="description"/>
+    </resultMap>
+    
+    <resultMap type="com.kingdee.entity.Record" id="recordList">
+		<result column="bank_card_no" property="bankCardNo"/>
+		<result column="balance" property="balance"/>
+		<result column="target_bank_card_no" property="targetbankCardNo"/>
+		<result column="target_account_name" property="targetAccountName"/>
+		<result column="currency" property="currency"/>
+		<result column="summary" property="summary"/>
+		<result column="postscript" property="postscript"/>
+		<result column="time" property="time"/>
+		<result column="month" property="month"/>
+		<result column="income" property="income"/>
+		<result column="outcome" property="outcome"/>
+		<result column="post_date" property="postDate"/>
+	</resultMap>
+    
+    <resultMap type="com.kingdee.web.entity.CreditCard" id="creditCardList">
+    	<result column="id" property="id"/>
+    	<result column="parent_bank_card_no" property="creditCardNo"/>
+    	<result column="bank_card_no" property="childCreditCardNo"/>
+    	<result column="currency" property="currency"/>
+    	<result column="house_holder" property="houseHolder"/>
+    	<result column="balance" property="balance"/>
+    	<result column="update_time" property="updateTime"/>
+    </resultMap>
+    
+    <resultMap type="com.kingdee.entity.SettledBillInfo" id="settledBillInfoList">
+    	<result column="credit_limit" property="creditLimit"/>
+    	<result column="limit_avail" property="limitAvail"/>
+    	<result column="payment_due_date" property="paymentDueDate"/>
+    	<result column="new_balance" property="newBalance"/>
+    	<result column="min_payment" property="minPayment"/>
+    	<result column="new_charges" property="newCharges"/>
+    	<result column="balanceBF" property="balanceBF"/>
+    	<result column="bill_date" property="billDate"/>
+    	<result column="statement_cycle_begin_date" property="statementCycleBeginDate"/> 
+    	<result column="statement_cycle_end_date" property="statementCycleEndDate"/>
+    	<result column="month" property="month"/>
+    	<result column="cash_credit_limit" property="cashCreditLimit"/>
+    	<result column="rid" property="rid"/>
+    	<result column="new_surplus_payment" property="newSurplusPayment"/>
+    	<result column="create_time" property="createTime"/>
+    	<result column="payment_balance" property="paymentBalance"/>
+    </resultMap>
+    
+    <select id="queryCreditCard" resultMap="creditCardList">
+    	SELECT id,balance,bank_card_no,parent_bank_card_no,currency,house_holder,update_time FROM bank_card 
+    	WHERE 
+    	type=#{type} 
+    	and bank_type=#{bankType} 
+    	and login_name=#{loginName}
+    	and rid>=1 ORDER BY update_time desc
+    </select>
+    
+    <select id="queryCreditCardByAccount" resultMap="creditCardList">
+    	SELECT id,bank_card_no,parent_bank_card_no,currency FROM bank_card 
+    	WHERE 
+    	type=1 
+    	and bank_type=#{bankAccount.bankType} 
+    	and login_name=#{bankAccount.loginName}
+    	and parent_bank_card_no is not null
+    </select>
+    
+    <select id="queryCreditCardRecord" resultMap="recordList">
+		SELECT
+			br.id,br.balance,br.post_date,br.summary,br.time,br.income,br.outcome,br.month,bc.parent_bank_card_no as cardNum,bc.currency
+		FROM
+			bank_record br,
+			bank_card bc
+		<where>
+			br.rid = #{id}
+			AND bc.type=#{type} 
+			AND bc.id=br.rid
+			<if test="begin!=null">
+				<![CDATA[AND (br.time>=#{begin} or br.post_date>=#{begin})]]>
+			</if>
+			<if test="end!=null">
+				<![CDATA[AND br.time<=#{end}]]>
+			</if>
+			AND br.enabled=1
+		</where>
+			ORDER BY time DESC
+		<if test="limit!=null">
+			<![CDATA[ limit #{limit}]]>
+		</if>
+    </select>
+
+    <select id="queryUnsettledCreditRecord" resultMap="recordList">
+    	select * from credit_unsettled_record
+    	where rid = #{rid}
+    	<if test="begin!=null">
+				<![CDATA[AND (time>=#{begin} or post_date>=#{begin})]]>
+		</if>
+		<if test="end!=null">
+			<![CDATA[AND time<=#{end}]]>
+		</if>
+    </select>
+
+    <resultMap type="com.kingdee.web.entity.Category" id="categoryList">
+    	<result column="CategoryDefaultId" property="id"/>
+    	<result column="Name" property="name"/>
+    </resultMap>
+    
+    <select id="getCategories" resultMap="categoryList">
+    	SELECT CategoryDefaultId,`Name` FROM sys_category
+    </select>
+    
+    <resultMap type="com.kingdee.entity.Currency" id="currencyList">
+    	<result column="Fno" property="code"/>
+    	<result column="Fname" property="name"/>
+    </resultMap>
+    
+    <select id="getCurrencies" resultMap="currencyList">
+    	SELECT Fno,Fname FROM currency 
+    </select>
+    
+    <select id="querySettledBillInfo" resultMap="settledBillInfoList">
+    	SELECT
+			credit_limit,
+			limit_avail,
+			payment_due_date,
+			new_balance,
+			min_payment,
+			new_charges,
+			new_surplus_payment,
+			balanceBF,
+			bill_date,
+			statement_cycle_begin_date,
+			statement_cycle_end_date,
+			`month`,
+			cash_credit_limit,
+			rid,
+			create_time,
+			payment_balance
+		FROM
+			settled_bill_info
+		<where>
+			`month` != '000000' and
+			<foreach collection="cardIds" item="id" open="(" close=")" separator=" or ">
+				rid=#{id}
+			</foreach>
+			<if test="transTradeTimeBeginTime != null">
+				<![CDATA[and (statement_cycle_begin_date >=#{transTradeTimeBeginTime} 
+				or (statement_cycle_begin_date <= #{transTradeTimeBeginTime}  and statement_cycle_end_date >= #{transTradeTimeBeginTime}))]]>
+			</if>
+		</where>
+    </select>
+    <select id="queryLastSettledBillInfo" resultMap="settledBillInfoList">
+    	SELECT
+			credit_limit,
+			limit_avail,
+			payment_due_date,
+			new_balance,
+			min_payment,
+			new_charges,
+			new_surplus_payment,
+			balanceBF,
+			bill_date,
+			statement_cycle_begin_date,
+			statement_cycle_end_date,
+			month,
+			cash_credit_limit,
+			rid
+		FROM
+			settled_bill_info
+		<where>
+			`month` != '000000' and rid=#{rid} order by month desc limit 1;
+		</where>
+    </select>
+    
+     <select id="querynewestSettledBillInfo" resultMap="settledBillInfoList">
+    	SELECT
+			credit_limit,
+			limit_avail,
+			payment_due_date,
+			new_balance,
+			min_payment,
+			new_charges,
+			new_surplus_payment,
+			balanceBF,
+			bill_date,
+			statement_cycle_begin_date,
+			statement_cycle_end_date,
+			`month`,
+			cash_credit_limit,
+			rid,
+			create_time,
+			payment_balance
+		FROM
+			settled_bill_info
+		<where>
+			`month` = '000000' and
+			<foreach collection="cardIds" item="id" open="(" close=")" separator=" or ">
+				rid=#{id}
+			</foreach>
+		</where>
+    </select>
+    
+    <select id="querySettledBillRecord" resultMap="recordList">
+    	SELECT
+			br.id,br.balance,br.post_date,br.summary,br.time,br.income,br.outcome,br.month,bc.parent_bank_card_no as cardNum,bc.currency
+		FROM
+			bank_record br,
+			bank_card bc
+    	<where>
+			br.rid = #{id}
+			AND bc.type=1
+			AND bc.id=br.rid
+			and
+			<foreach collection="months" open="(" close=")" item="month" separator=" or ">
+				month=#{month}
+			</foreach>
+			AND br.enabled=1
+		</where>
+    </select>
+     <select id="querySettledBillMonthRecord" resultMap="recordList">
+    	SELECT
+			br.id,br.balance,br.post_date,br.summary,br.time,br.income,br.outcome,br.month,bc.parent_bank_card_no as cardNum,bc.currency
+		FROM
+			bank_record br,
+			bank_card bc
+    	<where>
+			br.rid = #{id}
+			AND bc.type=1
+			AND bc.id=br.rid
+			and
+				br.month=#{month}
+			AND br.enabled=1
+		</where>
+    </select>
+</mapper>

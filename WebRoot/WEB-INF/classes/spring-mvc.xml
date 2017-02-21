@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util-3.1.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+        http://www.springframework.org/schema/task
+        http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+
+	<!-- <aop:config proxy-target-class="true"/> -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<!-- <context:component-scan base-package="com.kingdee" /> -->
+	<!-- 自动扫描且只扫描@Controller -->
+	<context:component-scan base-package="com.kingdee" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice"/>
+	</context:component-scan>
+
+	<mvc:annotation-driven>
+		<mvc:message-converters>
+	        <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter">
+	            <property name="supportedMediaTypes">
+	                <list>
+	                    <value>image/jpeg</value>
+	                    <value>image/png</value>
+	                    <value>image/gif</value>
+	                </list>
+	            </property>
+	        </bean>
+	    </mvc:message-converters>
+	</mvc:annotation-driven>
+	<!-- <task:annotation-driven/> 
+
+	
+	-->
+<context:property-placeholder location="classpath:data-access.properties"/>
+	<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+	    <property name="prefix" value="/"/> 
+	    <property name="suffix" value=".jsp"/>
+	    <property name="contentType" value="text/html;charset=utf-8"/>
+	</bean>
+
+	<!-- freemarker config -->
+	<bean id="freemarkerConfiguration" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+    	<property name="location" value="classpath:freemarker.properties"/>
+	</bean>
+	<bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
+		<property name="freemarkerSettings" ref="freemarkerConfiguration"/>
+		<property name="templateLoaderPath" value="/templates/"/>
+	</bean>
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
+		<property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+		<property name="order" value="1"/>
+		<property name="suffix" value=".ftl"/>
+		<property name="contentType" value="text/html;charset=utf-8"/>
+		<property name="attributes">
+			<props>
+				<prop key="version">${version}</prop>
+			</props>
+		</property>
+	</bean>
+
+	<!-- 整合json -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+	    <property name="messageConverters">
+    		<list>
+           		<ref bean="mappingJacksonHttpMessageConverter"/>
+    		</list>
+	    </property>
+	</bean>
+	<bean id="mappingJacksonHttpMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">  
+	    <property name="supportedMediaTypes">
+	        <list>
+	            <value>text/html;charset=utf-8</value>
+	        </list>
+	    </property>
+	</bean>
+
+	<!-- FileUpload Support -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="1000000" />
+	</bean>
+
+	<!-- Support static resource -->
+	<mvc:resources mapping="/js/**" location="/js/" />
+	<mvc:resources mapping="/css/**" location="/css/" />
+	<mvc:resources mapping="/images/**" location="/images/" />
+	<mvc:default-servlet-handler/>
+
+	<!-- systen trace -->
+	<mvc:interceptors>
+		<!-- mvc:interceptor>
+			<mvc:mapping path="/logon.do"/>
+			<bean class="com.kingdee.web.trace.SystemTraceInterceptor" />
+		</mvc:interceptor -->
+
+		<!-- 定义在mvc:interceptor下面的表示是对特定的请求才进行拦截的 -->
+		<!-- mvc:interceptor>
+			<mvc:mapping path="/*" />
+			<bean class="com.kingdee.web.SpringMVCInterceptor" />
+		</mvc:interceptor -->
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.kingdee.web.util.MDCIntercepteor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+</beans>

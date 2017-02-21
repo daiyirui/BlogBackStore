@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GlobalMapper">
+
+	<resultMap type="com.kingdee.entity.Currency" id="currencyList">
+		<result column="code" property="code" />
+		<result column="name" property="name" />
+	</resultMap>
+	<resultMap type="com.kingdee.entity.AutoProxy" id="proxyList">
+		<result column="proxy_ip" property="ip" />
+		<result column="proxy_port" property="port" />
+	</resultMap>
+	
+	<resultMap type="com.kingdee.entity.ResultUrl" id="resultUrl">
+		<result column="code" property="code" />
+		<result column="bank_type" property="bankType" />
+		<result column="result_code" property="resultCode" />
+		<result column="result_url" property="resultUrl" />
+		<result column="enable" property="enable" />
+	</resultMap>
+	<resultMap type="com.kingdee.entity.CitySource" id="citySource">
+		<result column="id" property="id" />
+		<result column="city_source" property="citySource" />
+	</resultMap>
+	<resultMap type="com.kingdee.entity.WhiteIp" id="whiteIp">
+		<result column="id" property="id" />
+		<result column="ip" property="ip" />
+		<result column="desc" property="desc" />
+	</resultMap>
+
+	<select id="getCurrencyList" resultMap="currencyList">
+		select FID as code, Fname as name from currency 
+	</select>
+
+	<select id="getProxy" resultMap="proxyList">
+		select proxy_ip,proxy_port from proxy_list where `enable`=1
+	</select>
+
+	<select id="getResultUrl" resultMap="resultUrl">
+		select code,result_code,result_url,enable,bank_type from result_url
+	</select>
+
+	<select id="existUdid" resultType="String">
+		select token from sys_trace where udid=#{tokenInfo.udid} and login_name=#{tokenInfo.loginName} and bank_type=#{tokenInfo.bankType}
+	</select>
+
+	<update id="updateTokenInfo">
+		update sys_trace set udid=#{tokenInfo.udid},token=#{tokenInfo.token},productName=#{tokenInfo.productName},productVersion=#{tokenInfo.productVersion}
+		where udid=#{tokenInfo.udid} and login_name=#{tokenInfo.loginName} and bank_type=#{tokenInfo.bankType}
+	</update>
+
+	<insert id="insertTokenInfo">
+		insert into sys_trace values(0,#{tokenInfo.udid},#{tokenInfo.protocolVersion},#{tokenInfo.token},NOW(),#{tokenInfo.productName}
+		,#{tokenInfo.productVersion},#{tokenInfo.loginName},#{tokenInfo.bankType})
+	</insert>
+
+
+
+	<select id="getCommunityState" resultType="Integer">
+		SELECT state FROM cardniu_switch WHERE fuc_name='Community'
+	</select>
+
+	<select id="getMultipleThread" resultType="Map">
+		select bank_type, multiple_thread from multiple_thread
+	</select>
+	
+	<select id="getUseMoxie" resultType="Map">
+		select bank_type, use_moxie from use_moxie
+	</select>
+
+	<insert id="saveCitySource">
+		insert into cmb_city_source(city_source) values(#{citySource})
+	</insert>
+
+	<select id="getCitySource" resultMap="citySource">
+		select id, city_source from cmb_city_source order by id desc limit 1
+	</select>
+
+	<select id="listWhiteIp" resultMap="whiteIp">
+		select id, ip, `desc` FROM white_ip
+	</select>
+
+</mapper>

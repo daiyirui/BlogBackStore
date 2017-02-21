@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx" xmlns:task="http://www.springframework.org/schema/task" xmlns:util="http://www.springframework.org/schema/util" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans     
+       http://www.springframework.org/schema/beans/spring-beans-4.2.xsd    
+       http://www.springframework.org/schema/context     
+       http://www.springframework.org/schema/context/spring-context-4.2.xsd    
+       http://www.springframework.org/schema/tx     
+       http://www.springframework.org/schema/tx/spring-tx-4.2.xsd
+       http://www.springframework.org/schema/aop     
+       http://www.springframework.org/schema/aop/spring-aop-4.2.xsd
+       http://www.springframework.org/schema/task 
+       http://www.springframework.org/schema/task/spring-task-4.2.xsd
+       http://www.springframework.org/schema/util
+       http://www.springframework.org/schema/util/spring-util-4.2.xsd"
+	default-lazy-init="false">
+	<!-- 使用annotation 自动注册bean, 并保证@Required、@Autowired的属性被注入 -->
+	<context:component-scan base-package="com.kingdee">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+	<context:component-scan base-package="com.mymoney.sms">
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+	<task:annotation-driven executor="executor" scheduler="scheduler" proxy-target-class="true" />
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+
+	<context:property-placeholder location="classpath:data-access-dev.properties"/>
+    <util:properties id="settings" location="classpath:data-access-dev.properties"/>
+
+	<!-- 配置事务管理器 <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> <property name="dataSource" ref="dataSource"/> </bean> -->
+	<!-- 事务的传播特性 <tx:advice id="txAdvice" transaction-manager="transactionManager"> <tx:attributes> <tx:method name="add*" propagation="REQUIRED"/> <tx:method name="del*" propagation="REQUIRED" /> <tx:method name="update*" propagation="REQUIRED"/> <tx:method name="*" read-only="true"/> </tx:attributes> </tx:advice> -->
+	<!-- 那些类那些方法使用事务 <aop:config> <aop:pointcut id="allManagerMethod" expression="execution(* com.kingdee.*.*.*(..))"/> <aop:advisor advice-ref="txAdvice" pointcut-ref="allManagerMethod"/> </aop:config> -->
+
+	<!-- 异步线程配置 -->
+	<task:executor id="executor" pool-size="20-100" queue-capacity="300000" />
+	<!-- 定时任务配置 -->
+	<task:scheduler id="scheduler" pool-size="10" />
+
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="${jdbc.driverClassName}"></property>
+		<property name="jdbcUrl" value="${jdbc.url}"></property>
+		<property name="user" value="${jdbc.username}"></property>
+		<property name="password" value="${jdbc.password}"></property>
+		<!-- 连接池在回收数据库连接时是否自动提交事务,false:回滚未提交的事务;true:自动提交事务 -->
+		<property name="autoCommitOnClose" value="true" />
+		<!-- 如果当前处于数据库访问高峰,连接池已被耗尽,当等待10000毫秒后还没有连接上,则抛出SQL异常,默认值是0,即永远等待 -->
+		<property name="checkoutTimeout" value="10000" />
+		<!-- 如果某个连接的空闲时间超过60秒,则自动关闭连接 -->
+		<property name="maxIdleTime" value="60" />
+		<!-- 初始化连接数 -->
+		<property name="initialPoolSize" value="5" />
+		<!-- 最小连接数 -->
+		<property name="minPoolSize" value="20" />
+		<!-- 最大连接数 -->
+		<property name="maxPoolSize" value="100" />
+		<!--当连接池中的连接耗尽的时候c3p0一次同时获取的连接数。默认值: 3 -->
+		<property name="acquireIncrement" value="3" />
+		<!--定义在从数据库获取新连接失败后重复尝试的次数。默认值: 30 ；小于等于0表示无限次 -->
+		<property name="acquireRetryAttempts" value="0" />
+		<!--重新尝试的时间间隔，默认为：1000毫秒 -->
+		<property name="acquireRetryDelay" value="1000" />
+		<!--每60秒检查所有连接池中的空闲连接。默认值: 0，不检查 -->
+		<property name="idleConnectionTestPeriod" value="60"></property>
+	</bean>
+	<!-- 配置myBatis -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="configLocation" value="classpath:mybatis-config.xml" />
+		<property name="mapperLocations" value="classpath:com/kingdee/mapper/*Mapper.xml" />
+	</bean>
+	<!-- 配置SqlSession -->
+	<bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+		<constructor-arg index="0" ref="sqlSessionFactory" />
+	</bean>
+
+	
+
+	<!-- ehcache -->
+	<bean id="cacheManagerFactory" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean">
+		<property name="configLocation">
+			<value>classpath:ehcache.xml</value>
+		</property>
+	</bean>
+	<bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cacheManager-ref="cacheManagerFactory" />
+
+	<bean id="jedisPoolConfig" class="redis.clients.jedis.JedisPoolConfig">
+		<property name="maxTotal" value="1000" />
+		<property name="maxIdle" value="10" />
+		<property name="minIdle" value="1" />
+		<property name="maxWaitMillis" value="5000" />
+		<property name="testOnBorrow" value="true" />
+		<property name="testOnReturn" value="true" />
+		<property name="testWhileIdle" value="true" />
+	</bean>
+
+	<!-- <bean id="jedis.shardInfo" class="redis.clients.jedis.JedisShardInfo">
+		<constructor-arg name="host" value="${redis.server}" />
+		<constructor-arg name="port" value="${redis.port}" type="int"/>
+		<constructor-arg name="timeout" value="2000" type="int"/>	
+		<constructor-arg name="name" value="ebank-pool"/>	
+		<property name="password" value="${redis.password}" />
+	</bean> -->
+
+	<!-- <bean id="shardedJedisPool" class="redis.clients.jedis.ShardedJedisPool">
+		<constructor-arg index="0" ref="jedisPoolConfig" />
+		<constructor-arg index="1">
+			<list>
+				<ref bean="jedis.shardInfo" />
+			</list>
+		</constructor-arg>
+	</bean> -->
+
+	<bean id="sentinelJedisPool" class="redis.clients.jedis.JedisSentinelPool">
+		<!-- <constructor-arg index="0" value="cn-master" /> -->
+		<!-- <constructor-arg index="0" value="cn-test-master" /> -->
+		<constructor-arg index="0" value="cn-dev-master" />
+		<constructor-arg index="1">
+			<set>
+				<value>172.22.23.211:26379</value>
+				<value>172.22.23.211:36379</value>
+				<value>172.22.23.211:46379</value>
+
+				<!-- <value>10.193.1.17:26379</value>
+				<value>10.193.1.18:26379</value>
+				<value>10.193.1.18:36379</value> -->
+
+				<!-- <value>10.193.1.233:26379</value>
+				<value>10.193.1.233:36379</value>
+				<value>10.193.1.233:46379</value>
+				<value>10.193.1.233:6379</value> -->
+			</set>
+		</constructor-arg>
+		<constructor-arg index="2" ref="jedisPoolConfig"/>
+		<constructor-arg index="3" value="5000"/>
+		<!-- <constructor-arg index="4" value="cardniu@feidee"/> -->
+		<!-- <constructor-arg index="4" value="kntest%pw_@dk2"/> -->
+		<constructor-arg index="4" value="kingdee"/>
+		<constructor-arg index="5" value="2"/>
+	</bean>
+
+	<!-- hessian -->
+	<bean id="sphinxSearch" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
+		<property name="serviceUrl" value="${analyzer.url}" />
+		<property name="serviceInterface" value="com.julicai.service.sphinx.inter.SphinxSearch" />
+	</bean>
+	<!-- spring rmi 监控 -->
+	<bean name="rmiDAO" class="com.kingdee.base.data.InitDAO">
+		<property name="sqlSession" ref="sqlSession" />
+	</bean>
+	
+</beans>
