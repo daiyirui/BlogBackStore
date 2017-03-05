@@ -29,16 +29,17 @@ public class AdminServlet extends HttpServlet {
 		 if("login".equals(action)) {
 			 login(request,response);
 			//个人基本资料的修改
-		 }else if("listAdmin".equals(action)) {
-			 listAdmin(request,response);
+		 }else if("listAdmins".equals(action)) {
+			 listAdmins(request,response);
 			 //跳转到个人信息修改页面
 		 }
 	}
 	
-	private void listAdmin(HttpServletRequest request,
+	private void listAdmins(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		IAdminDao admindao = new AdminDaoImpl();
 		List<Admins> AdminsList = admindao.AdminsList();
+		System.out.println(AdminsList);
 		request.setAttribute("AdminsList",AdminsList);
 		request.getRequestDispatcher("./show_admins.jsp").forward(request, response);
 	}
@@ -48,7 +49,7 @@ public class AdminServlet extends HttpServlet {
 		String apwd=request.getParameter("apwd");
 		IAdminDao admindao=new AdminDaoImpl();
 		Admins admin=admindao.LoginBackStrone(aname, apwd);
-		System.out.println(admin);
+	
 		if(admin != null) {
 			HttpSession session=request.getSession();
 			session.setAttribute("admins",admin);

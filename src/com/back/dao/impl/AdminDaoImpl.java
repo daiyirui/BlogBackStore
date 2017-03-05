@@ -92,7 +92,7 @@ public class AdminDaoImpl implements IAdminDao {
 			String sql="SELECT * FROM admins";
 			statement = connection.prepareStatement(sql);
 		    rs=statement.executeQuery();
-			if(rs.next()){
+			while(rs.next()){
 				Admins admin=new Admins();
 				admin.setAid(rs.getInt("aid"));
 				admin.setA_pid(rs.getInt("a_pid"));
@@ -115,8 +115,6 @@ public class AdminDaoImpl implements IAdminDao {
 					   admin.setPermission(permission);
 				   }
 				   lstAdmin.add(admin);
-			}else{
-			    return null;
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
