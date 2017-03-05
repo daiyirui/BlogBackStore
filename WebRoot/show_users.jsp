@@ -130,27 +130,7 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
         			<input class="button" type="button" name="btnBatch" id="btnBatch" value="批量删除" onclick="return checkBatchDel('chkOrdersnos');" />
                 </td>
                 <td colspan="8">
-                  <div class="pagination"> 
-                   共${sessionScope.UsersList.totalRows}前台用户&nbsp;&nbsp;&nbsp;当前第${sessionScope.UsersList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  	<c:if test="${sessionScope.UsersList.currentPage > 1}">
-                      <a href="ListUserServlet" title="First Page">&laquo; First</a>
-                      <a href="ListUserServlet?np=${sessionScope.UsersList.currentPage - 1}"  title="Previous Page">&laquo; Previous</a> 
-                    </c:if>
-                      <c:forEach var="i" begin="1" end="${sessionScope.UsersList.totalPages }">
-                    	<c:if test="${sessionScope.UsersList.currentPage == i}">
-                        	<a href="#" class="number current" title="${i }">${i }</a> 
-                        </c:if>
-                    	<c:if test="${sessionScope.UsersList.currentPage != i}"> 
-                    		<a href="ListUserServlet?np=${i }" class="number" title="${i }">${i }</a>
-                        </c:if>
-                	  </c:forEach>
-                      <c:if test="${sessionScope.UsersList.currentPage < sessionScope.UsersList.totalPages}">
-                      <a href="ListUserServlet?np=${sessionScope.UsersList.currentPage + 1}" 
-                      	 title="Next Page">Next &raquo;</a>
-                      <a href="ListUserServlet?np=${sessionScope.UsersList.totalPages}" 
-                      	 title="Last Page">Last &raquo;</a>
-                      </c:if>
-                  </div>
+             
                   <!-- End .pagination -->
                   <div class="clear">
                   </div>
@@ -159,8 +139,8 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
             </tfoot>
             <tbody>
            <!-- <c:forEach items="${sessionScope.UserList.data}" var="use" varStatus="su">  </c:forEach>-->
-             <c:if test="${!empty sessionScope.UsersList }">
-               <c:forEach items="${sessionScope.UsersList.data}" var="use"> 
+             <c:if test="${!empty UsersList}">
+               <c:forEach items="${UsersList}" var="use"> 
                  <c:if test="${use.uremarks eq 'no'}">
                    <tr style="background-color: #CC66FF;">
                  </c:if>

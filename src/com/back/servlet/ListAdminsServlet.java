@@ -27,12 +27,9 @@ this.doPost(request, response);
 	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/html");
-		request.setCharacterEncoding("gbk");
-		PageBean pb=new PageBean();
 		HttpSession session=request.getSession();
 	    IAdminBiz adminBiz=new AdminBizImpl();
-    	//¶¨Òå·ÖÒ³²ÎÊý
+    	//ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½
     	int pagesize=Integer.parseInt(this.getServletConfig().getInitParameter("pagesize"));
     	int nowpage=request.getParameter("np")!=null?Integer.parseInt(request.getParameter("np")):1;
     	pb=adminBiz.SelectAdminsList(nowpage, pagesize);

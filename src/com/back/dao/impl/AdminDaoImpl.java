@@ -82,65 +82,49 @@ public class AdminDaoImpl implements IAdminDao {
 		}		
 	}
 	@Override
-	public PageBean AdminsList(String strSQL, int currentPage, int pageSize) {
-		//����1������һ��PageBean����		
-		PageBean pb = new PageBean();
-		//����2������һ��SQL��䣬������ȡemp���м�¼�ĸ���
-		String strSQL1 = strSQL;
-		strSQL1 = strSQL1.substring(strSQL1.toLowerCase().indexOf("from"));
-		strSQL1 = "select count(*) "+strSQL1;
-		//����3��ִ��SQL���õ�������������ֵ��pb�����totalRows;
-		ResultSet rs = db.execQuery(strSQL1, new Object[]{});
-		try {
-			rs.next();			
-			pb.setTotalRows(rs.getInt(1));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		//����4����ҪΪpb�����data���Ը�ֵ,���Ȼ�ȡ��ҳ�ĵ�һ�����ݵ��б�
-		int start = (currentPage-1)*pageSize;
-		//����5��������̬��SQL���
-		strSQL = strSQL+" limit ?,?";
-		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//����6������ȡ�Ľ�������з�װ
+	public List<Admins> AdminsList() {
 		List<Admins> lstAdmin = new ArrayList<Admins>();
-		Admins admin=null;
+		PreparedStatement statement = null;
+		Connection connection = null;
+		ResultSet rs=null;
 		try {
-			while(rs.next()){
-				admin=new Admins();
+			connection = JDBCUtil.getConn();
+			String sql="SELECT * FROM admins";
+			statement = connection.prepareStatement(sql);
+		    rs=statement.executeQuery();
+			if(rs.next()){
+				Admins admin=new Admins();
 				admin.setAid(rs.getInt("aid"));
 				admin.setA_pid(rs.getInt("a_pid"));
 				admin.setAname(rs.getString("aname"));
 				admin.setApwd(rs.getString("apwd"));
-				admin.setAdate(rs.getString("adate"));
+				admin.setAdate(rs.getDate("adate"));
 				admin.setArealname(rs.getString("arealname"));
 				admin.setAsex(rs.getString("asex"));
 				admin.setAremarks(rs.getString("aremarks"));
 				Permissions permission=new Permissions(); 
-				ResultSet re=db.execQuery("SELECT * FROM permissions where pid=?", new Object[]{rs.getInt("a_pid")});
+				String sql1="SELECT * FROM permissions where pid=?";
+				statement = connection.prepareStatement(sql1);
+				statement.setInt(1, rs.getInt("a_pid"));
+				ResultSet re=statement.executeQuery();
 				   if(re.next()){
 					   permission.setPid(re.getInt("pid"));
 					   permission.setPname(re.getString("pname"));
 					   permission.setPcontent(re.getString("pcontent"));
 					   permission.setPremarks(re.getString("premarks"));
 					   admin.setPermission(permission);
-				   }			
-				lstAdmin.add(admin);
+				   }
+				   lstAdmin.add(admin);
+			}else{
+			    return null;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} finally{
-			db.closeConn();	
-		}		
-		//����7������ȡ���ı�ҳ���ݸ�ֵ��pb�����data����
-		pb.setData(lstAdmin);		
-		//����8��Ϊ�������Ը�ֵ,����ΪtotalPages��ֵ����ΪtotalRows��pageSize�Ѿ�����ֵ
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);				
-		//����9������װ�õ�pb���󷵻�
-		return pb;
+			return null;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, rs);
+		}
+		return lstAdmin;
 	}
 
 	/**
@@ -148,7 +132,7 @@ public class AdminDaoImpl implements IAdminDao {
 	 */
 	public static void main(String[] args) {
        IAdminDao ad=new AdminDaoImpl();      
-       Admins a=new Admins(5,3,"hello5","444","","hello9","Ů",null);
+       Admins a=new Admins();
     	   //ad.FindByaid(2);
        int as =ad.UpdateAdmins(a);
        System.out.println(as);
@@ -166,7 +150,7 @@ public class AdminDaoImpl implements IAdminDao {
 			statement.setString(1, aname);
 			statement.setString(2, apwd);
 		    rs=statement.executeQuery();
-			Admins admin=new Admins();
+			Admins admin=null;
 			if(rs.next()){
 				admin=new Admins();
 				admin.setAid(rs.getInt("aid"));
@@ -215,7 +199,7 @@ public class AdminDaoImpl implements IAdminDao {
 				admin.setA_pid(rs.getInt("a_pid"));
 				admin.setAname(rs.getString("aname"));
 				admin.setApwd(rs.getString("apwd"));
-				admin.setAdate(rs.getString("adate"));
+				admin.setAdate(rs.getDate("adate"));
 				admin.setArealname(rs.getString("arealname"));
 				admin.setAsex(rs.getString("asex"));
 				admin.setAremarks(rs.getString("aremarks"));

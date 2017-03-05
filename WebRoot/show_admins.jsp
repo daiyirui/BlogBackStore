@@ -57,13 +57,6 @@
             <tfoot>
               <tr>
                 <td colspan="6">
-                <div class="pagination"> 
-                 共${sessionScope.AdminsList.totalRows}后台用户&nbsp;&nbsp;&nbsp;当前第${sessionScope.AdminsList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <c:forEach var="i" begin="1" end="${sessionScope.AdminsList.totalPages}">
-                 <c:if test="${sessionScope.AdminsList.currentPage == i}"><a href="#" class="number current" title="${i }">${i }</a></c:if>
-                 <c:if test="${sessionScope.AdminsList.currentPage != i}"><a href="ListAdminsServlet?np=${i }" class="number" title="${i }">${i }</a>&nbsp;</c:if>
-              </c:forEach>                 	
-                </div>
                  <div >
                    <a href="DownLoadAdminServlet" class="current1" title="excelExport">导出后台用户</a>
                    
@@ -75,8 +68,8 @@
             </tfoot>
             <tbody>
             <!--  -->    
-          <c:if test="${!empty sessionScope.AdminsList}">
-              <c:forEach items="${sessionScope.AdminsList.data}" var="admin"> 
+          <c:if test="${!empty AdminsList}">
+              <c:forEach items="${AdminsList}" var="admin"> 
                  <tr>
                 <td>${admin.aid}</td>
                 <td>${admin.aname}</td>
