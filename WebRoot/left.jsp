@@ -54,7 +54,7 @@ function opep(){
         </li>
         <li> <a href="#" class="nav-top-item"> 评论管理 </a>
           <ul>
-            <li><a href="ListCommentServlet" target="main">评论列表</a></li>
+            <li><a href="CommentServlet?action=listComment" target="main">评论列表</a></li>
           </ul>
         </li>
         <li> <a href="#" class="nav-top-item"> 微博管理 </a>

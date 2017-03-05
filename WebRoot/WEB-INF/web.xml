@@ -92,8 +92,8 @@
     <servlet-class>com.back.servlet.ExcelImportServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>ListCommentServlet</servlet-name>
-    <servlet-class>com.back.servlet.ListCommentServlet</servlet-class>
+    <servlet-name>CommentServlet</servlet-name>
+    <servlet-class>com.back.servlet.CommentServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>DeleteCommentServlet</servlet-name>
@@ -228,8 +228,8 @@
     <url-pattern>/ExcelImportServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>ListCommentServlet</servlet-name>
-    <url-pattern>/ListCommentServlet</url-pattern>
+    <servlet-name>CommentServlet</servlet-name>
+    <url-pattern>/CommentServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>DeleteCommentServlet</servlet-name>

@@ -9,22 +9,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.back.common.JDBCUtil;
-import com.microblog.dao.ICommentDao;
-import com.microblog.po.Comment;
-import com.microblog.po.Users;
-public class CommentDaoImpl implements ICommentDao {
+import com.back.dao.ICommentDao;
+import com.back.po.Comment;
+import com.back.po.Users;
+public class CommentDaoImpl implements  ICommentDao {
 
 	@Override
-	public List<Comment> findByComment(int c_wid) {
+	public List<Comment> findAllComment() {
 		//step5:创建List结合对象
 				List<Comment> comments=new ArrayList<Comment>();
 				Connection connection = null;
 			    PreparedStatement statement = null;
 			   try {
-					String sql="SELECT * FROM comment where c_wid= ?";
+					String sql="SELECT * FROM comment";
 					connection = JDBCUtil.getConn();
 			        statement = connection.prepareStatement(sql);
-			        statement.setInt(1, c_wid);
 			        ResultSet rs = statement.executeQuery();
 					//step6:遍历结果集
 						while (rs.next()) {
@@ -71,50 +70,6 @@ public class CommentDaoImpl implements ICommentDao {
 			   return comments;
 	}
 	
-	//插入评论
-	@Override
-	public int InsertComment(Comment comm) {
-		  Connection connection = null;
-	       PreparedStatement statement = null;
-	       int  a = 0;
-	        try {
-	        	String sql="insert into comment(c_wid,c_uid,ccontent,cdate,cremarks,cimages,c_cid,flag) values(?,?,?,now(),null,?,?,0)";
-	            connection = JDBCUtil.getConn();
-	            statement = connection.prepareStatement(sql);
-	            statement.setInt(1, comm.getC_wid());
-	            statement.setInt(2, comm.getC_uid());
-	            statement.setString(3, comm.getCcontent());
-	            statement.setString(4, comm.getCimages());
-	            statement.setInt(5, comm.getC_cid());
-	            a=statement.executeUpdate();
-	        } catch (SQLException e) {
-	        	a=0;
-	            e.printStackTrace();
-	        } finally {
-	            JDBCUtil.closeDB(connection, statement, null);
-	        }
-	        System.out.println(a);
-		return a;
-	}
-
-	@Override
-	public int DeleteComment(int cid) {
-		 Connection connection = null;
-	       PreparedStatement statement = null;
-         int a = 0;
-         try {
-      	   connection = JDBCUtil.getConn();
-             String sql = "update comment set flag = 1 where cid=?";
-             System.out.println(sql);
-             statement = connection.prepareStatement(sql);
-             statement.setInt(1, cid);
-             a=statement.executeUpdate();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         } finally {
-             JDBCUtil.closeDB(connection, statement, null);
-         }
-		return a;
-	}
+	
   
 }

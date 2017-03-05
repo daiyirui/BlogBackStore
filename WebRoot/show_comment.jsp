@@ -102,34 +102,14 @@
 						<a class="button" href="javascript:;"
 							onclick="SetReverseChecked('chkDeptnos');return false;">反选</a>
 						<input type="button" onclick="mustdeltet()" name="btnBatch" id="btnBatch" class="button" value="批量删除"/>
-                 <div class="pagination"> 
-                   共${sessionScope.CommentList.totalRows}评论信息&nbsp;&nbsp;&nbsp;当前第${sessionScope.CommentList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  	<c:if test="${sessionScope.CommentList.currentPage > 1}">
-                      <a href="ListCommentServlet" title="First Page">&laquo; First</a>
-                      <a href="ListCommentServlet?np=${sessionScope.CommentList.currentPage - 1}"  title="Previous Page">&laquo; Previous</a> 
-                    </c:if>
-                      <c:forEach var="i" begin="1" end="${sessionScope.CommentList.totalPages }">
-                    	<c:if test="${sessionScope.CommentList.currentPage == i}">
-                        	<a href="#" class="number current" title="${i }">${i }</a> 
-                        </c:if>
-                    	<c:if test="${sessionScope.CommentList.currentPage != i}"> 
-                    		<a href="ListCommentServlet?np=${i }" class="number" title="${i }">${i }</a>
-                        </c:if>
-                	  </c:forEach>
-                      <c:if test="${sessionScope.CommentList.currentPage < sessionScope.CommentList.totalPages}">
-                      <a href="ListCommentServlet?np=${sessionScope.CommentList.currentPage + 1}" 
-                      	 title="Next Page">Next &raquo;</a>
-                      <a href="ListCommentServlet?np=${sessionScope.CommentList.totalPages}" 
-                      	 title="Last Page">Last &raquo;</a>
-                      </c:if>
-                  </div>
+          
                   <!-- End .pagination -->
                   <div class="clear"></div>                </td>
               </tr>
             </tfoot>
             <tbody>
-               <c:if test="${!empty sessionScope.CommentList}">
-                 <c:forEach items="${sessionScope.CommentList.data}" var="com">
+               <c:if test="${!empty CommentList}">
+                 <c:forEach items="${CommentList}" var="com">
                     <tr>
                 <td>
                   <input type="checkbox" name="chkDeptnos" id="chkDeptnos"	value="${com.cid}"/>     </td>
