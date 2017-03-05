@@ -1,6 +1,7 @@
 package com.back.po;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class Users implements Serializable {
@@ -10,45 +11,20 @@ public class Users implements Serializable {
    private String unickname;
    private String usex; 
    private String uaddress;
-   private String udate;
+   private Date udate;
    private String uqq;
    private String uedu;
    private String upic;
    private String uques;
+   private String uemail;
    private String urealname;
    private String uremarks;
+   //判断该用户是不是被登陆者关注了
+   private Integer iGtflag;
+   //判断该用户是不是关注登陆者了
+   private Integer tGiflag;
    public Users(){}
-   public Users(Integer uid,String uname,String upwd,String unickname,String usex,String uaddress,
-             String udate,String uqq,String uedu,String upic,String uques,String urealname,String uremarks){
-	   this.uid=uid;
-	   this.uname=uname;
-	   this.upwd=upwd;
-	   this.unickname=unickname;
-	   this.usex=usex;
-	   this.uaddress=uaddress;
-	   this.udate=udate;
-	   this.uqq=uqq;
-	   this.uedu=uedu;
-	   this.upic=upic;
-	   this.uques=uques;
-	   this.urealname=urealname;
-	   this.uremarks=uremarks;
-   }
-   public Users(String uname,String upwd,String unickname,String usex,String uaddress,
-           String udate,String uqq,String uedu,String upic,String uques,String urealname,String uremarks){	   
-	   this.uname=uname;
-	   this.upwd=upwd;
-	   this.unickname=unickname;
-	   this.usex=usex;
-	   this.uaddress=uaddress;
-	   this.udate=udate;
-	   this.uqq=uqq;
-	   this.uedu=uedu;
-	   this.upic=upic;
-	   this.uques=uques;
-	   this.urealname=urealname;
-	   this.uremarks=uremarks;
-   }
+ 
 	public Integer getUid() {
 		return uid;
 	}
@@ -85,10 +61,10 @@ public class Users implements Serializable {
 	public void setUaddress(String uaddress) {
 		this.uaddress = uaddress;
 	}
-	public String getUdate() {
+	public Date getUdate() {
 		return udate;
 	}
-	public void setUdate(String udate) {
+	public void setUdate(Date udate) {
 		this.udate = udate;
 	}
 	public String getUqq() {
@@ -127,5 +103,40 @@ public class Users implements Serializable {
 	public void setUremarks(String uremarks) {
 		this.uremarks = uremarks;
 	}
-	   
+	
+	public String getUemail() {
+		return uemail;
+	}
+	public void setUemail(String uemail) {
+		this.uemail = uemail;
+	}
+	
+	public Integer getiGtflag() {
+		return iGtflag;
+	}
+
+	public void setiGtflag(Integer iGtflag) {
+		this.iGtflag = iGtflag;
+	}
+
+	public Integer gettGiflag() {
+		return tGiflag;
+	}
+
+	public void settGiflag(Integer tGiflag) {
+		this.tGiflag = tGiflag;
+	}
+
+	@Override
+	public String toString() {
+		return "Users [uid=" + uid + ", uname=" + uname + ", upwd=" + upwd
+				+ ", unickname=" + unickname + ", usex=" + usex + ", uaddress="
+				+ uaddress + ", udate=" + udate + ", uqq=" + uqq + ", uedu="
+				+ uedu + ", upic=" + upic + ", uques=" + uques + ", uemail="
+				+ uemail + ", urealname=" + urealname + ", uremarks="
+				+ uremarks + ", iGtflag=" + iGtflag + ", tGiflag=" + tGiflag
+				+ "]";
+	}
+
+
 }

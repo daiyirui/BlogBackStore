@@ -1,8 +1,6 @@
 package com.back.po;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 @SuppressWarnings("serial")
 public class Relations implements Serializable {
@@ -11,44 +9,9 @@ public class Relations implements Serializable {
    private Integer g_id;
    private Integer rstate;
    private String remarks;
+   private Users ridUser = new Users();
+   private Users gidUser = new Users();
    
-   private int usertimes;//关注的人数
-   private List<Users> uselist=new ArrayList<Users>();
-   private Users use=new Users();
-   
-
-public Relations(){}
-   public Relations(Integer rid, Integer r_id, Integer g_id, Integer rstate,String remarks){
-	   this.rid=rid;
-	   this.r_id=r_id;
-	   this.g_id=g_id;
-	   this.rstate=rstate;
-	   this.remarks=remarks;
-   }
-   public Relations( Integer r_id, Integer g_id, Integer rstate,String remarks){	 
-	   this.r_id=r_id;
-	   this.g_id=g_id;
-	   this.rstate=rstate;
-	   this.remarks=remarks;
-   }
-   public int getUsertimes() {
-		return usertimes;
-	}
-	public void setUsertimes(int usertimes) {
-		this.usertimes = usertimes;
-	}
-	public List<Users> getUselist() {
-		return uselist;
-	}
-	public void setUselist(List<Users> uselist) {
-		this.uselist = uselist;
-	}
-	public Users getUse() {
-		return use;
-	}
-	public void setUse(Users use) {
-		this.use = use;
-	}
 	public String getRemarks() {
 	    return remarks;
 	}
@@ -78,6 +41,23 @@ public Relations(){}
 	}
 	public void setRstate(Integer rstate) {
 		this.rstate = rstate;
+	}
+	public Users getRidUser() {
+		return ridUser;
+	}
+	public void setRidUser(Users ridUser) {
+		this.ridUser = ridUser;
+	}
+	public Users getGidUser() {
+		return gidUser;
+	}
+	public void setGidUser(Users gidUser) {
+		this.gidUser = gidUser;
+	}
+	@Override
+	public String toString() {
+		return "Relations [rid=" + rid + ", r_id=" + r_id + ", g_id=" + g_id + ", rstate=" + rstate + ", remarks="
+				+ remarks + ", ridUser=" + ridUser + ", gidUser=" + gidUser + "]";
 	}
    
 }

@@ -11,32 +11,13 @@ public class Comment implements Serializable {
     private String cdate;
     private String cremarks;
     private String cimages;
+    //辨别是不是回复哪一条评论还是评论微博信息的，0代表评论微博，不为0代表回复哪一条评论信息
+    private Integer c_cid;
+    //辨别该评论是不是被用户删除,用户只对自己的微博的评论信息有删除权利，0代表没有删除，-1代表删除
+    private Integer flag;
     private Weibo weibo=new Weibo();
     private Users use=new Users();
-    public Comment(){}
-    public Comment(Integer cid,Integer c_wid,Integer c_uid, String ccontent,
-    		String cdate, String cremarks,String cimages,Weibo weibo, Users use){
-    	this.cid=cid;
-    	this.c_wid=c_wid;
-    	this.c_uid=c_uid;
-    	this.ccontent=ccontent;
-    	this.cdate=cdate;
-    	this.cremarks=cremarks;    	
-    	this.cimages=cimages;
-    	this.weibo=weibo;
-    	this.use=use;
-    }
-    public Comment(Integer c_wid,Integer c_uid, String ccontent,
-    		String cdate, String cremarks,String cimages,Weibo weibo, Users use){
-    	this.c_wid=c_wid;
-    	this.c_uid=c_uid;
-    	this.ccontent=ccontent;
-    	this.cdate=cdate;
-    	this.cremarks=cremarks;    	
-    	this.cimages=cimages;
-    	this.weibo=weibo;
-    	this.use=use;
-    }
+  
 	public String getCimages() {
 		return cimages;
 	}
@@ -91,4 +72,25 @@ public class Comment implements Serializable {
 	public void setCremarks(String cremarks) {
 		this.cremarks = cremarks;
 	}
+	public Integer getC_cid() {
+		return c_cid;
+	}
+	public void setC_cid(Integer c_cid) {
+		this.c_cid = c_cid;
+	}
+	
+	public Integer getFlag() {
+		return flag;
+	}
+	public void setFlag(Integer flag) {
+		this.flag = flag;
+	}
+	@Override
+	public String toString() {
+		return "Comment [cid=" + cid + ", c_wid=" + c_wid + ", c_uid=" + c_uid
+				+ ", ccontent=" + ccontent + ", cdate=" + cdate + ", cremarks="
+				+ cremarks + ", cimages=" + cimages + ", c_cid=" + c_cid
+				+ ", flag=" + flag + ", weibo=" + weibo + ", use=" + use + "]";
+	}
+	
 }

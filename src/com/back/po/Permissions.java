@@ -10,25 +10,8 @@ public class Permissions implements Serializable {
    private String pname;
    private String pcontent;
    private String premarks;
-   List<Percontent> content=new ArrayList<Percontent>();
-   public List<Percontent> getContent() {
-	return content;
-}
-public void setContent(List<Percontent> content) {
-	this.content = content;
-}
-public Permissions(){}
-   public Permissions(Integer pid,String pname,String pcontent,String premarks){
-	   this.pid=pid;
-	   this.pname=pname;
-	   this.pcontent=pcontent;
-	   this.premarks=premarks;
-   }
-   public Permissions(String pname,String pcontent,String premarks){
-	   this.pname=pname;
-	   this.pcontent=pcontent;
-	   this.premarks=premarks;
-   }
+   private List<Percontent> content=new ArrayList<Percontent>();
+
 	public Integer getPid() {
 		return pid;
 	}
@@ -53,4 +36,16 @@ public Permissions(){}
 	public void setPremarks(String premarks) {
 		this.premarks = premarks;
 	}
+	public List<Percontent> getContent() {
+	    return content;
+    }
+	public void setContent(List<Percontent> content) {
+		this.content = content;
+	}
+	@Override
+	public String toString() {
+		return "Permissions [pid=" + pid + ", pname=" + pname + ", pcontent=" + pcontent + ", premarks=" + premarks
+				+ ", content=" + content + "]";
+	}
+	
 }

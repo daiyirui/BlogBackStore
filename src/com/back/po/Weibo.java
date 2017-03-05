@@ -1,6 +1,8 @@
 package com.back.po;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @SuppressWarnings("serial")
 public class Weibo implements Serializable {
@@ -10,30 +12,16 @@ public class Weibo implements Serializable {
    private String wimage;
    private String wremarks;
    private Integer wtimes;
-   private Integer w_uid;//���
+   private Integer w_uid;//
    private Integer wcountcomment;
+   //判断该微博是否是转发过来的，0代表不是，假如是代表转发微博的wid
+   private Integer w_wid;
+   //判断是否被登陆用户收藏标记
+   private Integer flag;
    private Users use=new Users();
-
-   public Weibo(){}
-   public Weibo(Integer wid,String wcontent,String wdate,String wimage,String wremarks,Integer wtimes,Integer w_uid,Integer wcountcomment){
-	   this.wid=wid;
-	   this.wcontent=wcontent;
-	   this.wdate=wdate;
-	   this.wimage=wimage;
-	   this.wremarks=wremarks;
-	   this.wtimes=wtimes;
-	   this.w_uid=w_uid;
-	   this.wcountcomment=wcountcomment;
-   }
-   public Weibo(String wcontent,String wdate,String wimage,String wremarks,Integer wtimes,Integer w_uid,Integer wcountcomment){	
-	   this.wcontent=wcontent;
-	   this.wdate=wdate;
-	   this.wimage=wimage;
-	   this.wremarks=wremarks;
-	   this.wtimes=wtimes;
-	   this.w_uid=w_uid;
-	   this.wcountcomment=wcountcomment;
-   }
+   
+   private List<Comment> comments = new ArrayList<Comment>();
+ 
     public Users getUse() {
 		return use;
 	}
@@ -88,4 +76,36 @@ public class Weibo implements Serializable {
 	public void setW_uid(Integer w_uid) {
 		this.w_uid = w_uid;
 	}
+	
+	public Integer getFlag() {
+		return flag;
+	}
+	public void setFlag(Integer flag) {
+		this.flag = flag;
+	}
+	
+	public Integer getW_wid() {
+		return w_wid;
+	}
+	public void setW_wid(Integer w_wid) {
+		this.w_wid = w_wid;
+	}
+	
+	public List<Comment> getComments() {
+		return comments;
+	}
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+	
+	@Override
+	public String toString() {
+		return "Weibo [wid=" + wid + ", wcontent=" + wcontent + ", wdate="
+				+ wdate + ", wimage=" + wimage + ", wremarks=" + wremarks
+				+ ", wtimes=" + wtimes + ", w_uid=" + w_uid
+				+ ", wcountcomment=" + wcountcomment + ", w_wid=" + w_wid
+				+ ", flag=" + flag + ", use=" + use + ", comments=" + comments
+				+ "]";
+	}
+	
 }
