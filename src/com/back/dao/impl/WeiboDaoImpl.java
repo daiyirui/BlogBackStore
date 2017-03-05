@@ -1,66 +1,57 @@
 package com.back.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.back.dao.IWeiboDao;
-import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
-import com.back.po.Users;
-import com.back.po.Weibo;
+import com.back.common.JDBCUtil;
+import com.microblog.dao.ICollectionDao;
+import com.microblog.dao.ICommentDao;
+import com.microblog.dao.IWeiboDao;
+import com.microblog.po.Comment;
+import com.microblog.po.Users;
+import com.microblog.po.Weibo;
 
 public class WeiboDaoImpl implements IWeiboDao {
-    DBConn db;
-	public WeiboDaoImpl() {
-		// TODO Auto-generated constructor stub
-		db=new DBConn();
-	}
-
+	//uidä»…ä»…æ˜¯ç”¨æ¥åˆ¤æ–­æˆ‘æ”¶è—äº†è¿™æ¡å¾®åšæ²¡æœ‰
+	@SuppressWarnings("resource")
 	@Override
-	public PageBean FindByPage(String strSQL, int currentPage, int pageSize) {
-		//²½Öè1£º´´½¨Ò»¸öPageBean¶ÔÏó		
-		PageBean pb = new PageBean();
-		//²½Öè2£º´´½¨Ò»¸öSQLÓï¾ä£¬ÓÃÀ´»ñÈ¡emp±íÖĞ¼ÇÂ¼µÄ¸öÊı
-		String strSQL1 = strSQL;
-		strSQL1 = strSQL1.substring(strSQL1.toLowerCase().indexOf("from"));
-		strSQL1 = "select count(*) "+strSQL1;
-		//²½Öè3£ºÖ´ĞĞSQLÓï¾äµÃµ½½á¹û²¢½«½á¹û¸³Öµ¸øpb¶ÔÏóµÄtotalRows;
-		ResultSet rs = db.execQuery(strSQL1, new Object[]{});
+	public Weibo FindBywid(int uid,int wid) {
+		Connection connection = null;
+	    PreparedStatement statement = null;
+		Weibo weibo = new Weibo();
 		try {
-			rs.next();			
-			pb.setTotalRows(rs.getInt(1));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		//²½Öè4£ºĞèÒªÎªpb¶ÔÏóµÄdataÊôĞÔ¸³Öµ,Ê×ÏÈ»ñÈ¡±¾Ò³µÄµÚÒ»ÌõÊı¾İµÄĞĞ±ê
-		int start = (currentPage-1)*pageSize;
-		//²½Öè5£º´´½¨¶¯Ì¬µÄSQLÓï¾ä
-		strSQL = strSQL+" limit ?,?";
-		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//²½Öè6£º½«»ñÈ¡µÄ½á¹û¼¯½øĞĞ·â×°
-		List<Weibo> lstWeibo = new ArrayList<Weibo>();
-		Weibo weibo=null;
-		try {
-			while(rs.next()){
-				weibo=new Weibo();		
+			//step1ï¼š sqlè¯­å¥
+			String sql="SELECT * FROM weibo where  wid=?";	
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, wid);
+			//step3:è·å–è¿”å›å€¼ç»“æœé›†
+			ResultSet rs=statement.executeQuery();
+			//step4:int å˜é‡
+			if(rs.next()){
+				//step6:éå†ç»“æœé›†
 				   weibo.setWid(rs.getInt("wid"));
 				   weibo.setWcontent(rs.getString("wcontent"));
 				   weibo.setWdate(rs.getString("wdate"));
-				   String s="";
-				   if(rs.getString("wimage")!=null){
-					   s=rs.getString("wimage").replaceAll("/Microblog/","");
-					   weibo.setWimage(s);
-				   }else{
-					   weibo.setWimage(rs.getString("wimage"));  
-				   }				   //
+				   weibo.setWimage(rs.getString("wimage"));
 				   weibo.setWtimes(rs.getInt("wtimes"));
 				   weibo.setWremarks(rs.getString("wremarks"));
 				   weibo.setWcountcomment(rs.getInt("wcountcomment"));
 				   weibo.setW_uid(rs.getInt("w_uid"));
-				   ResultSet re=db.execQuery("SELECT * FROM users where uid=?", new Object[]{rs.getInt("w_uid")});
+				   weibo.setW_wid(rs.getInt("w_wid"));
+				   //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«ç”¨æˆ·æ”¶è—äº†
+				   ICollectionDao collectiondao = new CollectionDaoImpl();
+				   if(collectiondao.judgeColletionBywid(uid, rs.getInt("wid"))==1) {
+					   weibo.setFlag(1);
+				   }
+				   sql = "SELECT * FROM users where uid=?";
+				   statement = connection.prepareStatement(sql);
+				   statement.setInt(1, rs.getInt("w_uid"));
+				   ResultSet re=statement.executeQuery();
 				   if(re.next()){
 					    Users use=new Users();
 					    use.setUid(re.getInt("uid"));
@@ -69,7 +60,7 @@ public class WeiboDaoImpl implements IWeiboDao {
 					    use.setUnickname(re.getString("unickname"));
 					    use.setUsex(re.getString("usex"));
 					    use.setUaddress(re.getString("uaddress"));
-					    use.setUdate(re.getString("udate"));
+					    use.setUdate(re.getDate("udate"));
 					    use.setUpic(re.getString("upic"));
 					    use.setUqq(re.getString("uqq"));
 					    use.setUedu(re.getString("uedu"));
@@ -77,110 +68,445 @@ public class WeiboDaoImpl implements IWeiboDao {
 					    use.setUrealname(re.getString("urealname"));
 					    use.setUremarks(re.getString("uremarks"));
 					    weibo.setUse(use);
-				   }			
-				lstWeibo.add(weibo);
-			}
+				   }
+			}			 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			db.closeConn();	
-		}		
-		//²½Öè7£º½«»ñÈ¡µ½µÄ±¾Ò³Êı¾İ¸³Öµ¸øpb¶ÔÏóµÄdataÊôĞÔ
-		pb.setData(lstWeibo);		
-		//²½Öè8£ºÎªÆäÓàÊôĞÔ¸³Öµ,ÎŞĞèÎªtotalPages¸³Öµ£¬ÒÔÎªtotalRowsºÍpageSizeÒÑ¾­±»¸³Öµ
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);				
-		//²½Öè9£º½«·â×°ºÃµÄpb¶ÔÏó·µ»Ø
-		return pb;
+	           e.printStackTrace();
+	           return null;
+	       } finally {
+	           JDBCUtil.closeDB(connection, statement, null);
+	       }
+		return weibo;
+	}
+	@Override
+	public int InsertWeibo(Weibo weibo, int uid) {
+		   Connection connection = null;
+	       PreparedStatement statement = null;
+	       int  a = 0;
+	        try {
+	        	String sql="insert into weibo(wcontent,wdate,wimage,wtimes,w_uid,wremarks,wcountcomment w_wid) values(?,now(),?,0,?,null,0,0)";
+	            connection = JDBCUtil.getConn();
+	            statement = connection.prepareStatement(sql);
+	            statement.setString(1, weibo.getWcontent());
+	            statement.setString(2, weibo.getWimage());
+	            statement.setInt(3, uid);
+	            a=statement.executeUpdate();
+	        } catch (SQLException e) {
+	        	a=0;
+	            e.printStackTrace();
+	        } finally {
+	            JDBCUtil.closeDB(connection, statement, null);
+	        }
+		return a;
+	}
+	
+    //æ˜¾ç¤ºç™»å½•è€…å’Œå…¶æ‰€å…³æ³¨äººçš„å¾®åšä¿¡æ¯
+	@Override
+	public List<Weibo> FindByLogin(int uid) {
+		//step5:åˆ›å»ºListç»“åˆå¯¹è±¡
+		List<Weibo> lisWeibo=new ArrayList<Weibo>();
+		Connection connection = null;
+	    PreparedStatement statement = null;
+	   try {
+			String sql="SELECT * FROM weibo where w_uid= any(select g_id from relations where r_id=?) or w_uid=? order by wdate desc";
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+	        statement.setInt(2, uid);
+	        ResultSet rs = statement.executeQuery();
+			
+			//step6:éå†ç»“æœé›†
+				while (rs.next()) {
+				   Weibo weibo=new Weibo();		
+				   weibo.setWid(rs.getInt("wid"));
+				   weibo.setWcontent(rs.getString("wcontent"));
+				  
+				   weibo.setWdate(rs.getString("wdate"));
+				   weibo.setWimage(rs.getString("wimage"));
+				   weibo.setWtimes(rs.getInt("wtimes"));
+				   weibo.setWremarks(rs.getString("wremarks"));
+				   weibo.setWcountcomment(rs.getInt("wcountcomment"));
+				   weibo.setW_uid(rs.getInt("w_uid"));
+				   weibo.setW_wid(rs.getInt("w_wid"));
+				   //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«ç”¨æˆ·æ”¶è—äº†
+				   ICollectionDao collectiondao = new CollectionDaoImpl();
+				   System.out.println(collectiondao.judgeColletionBywid(uid, rs.getInt("wid")));
+				   if(collectiondao.judgeColletionBywid(uid, rs.getInt("wid"))==1) {
+					   weibo.setFlag(1);
+				   }
+				   sql = "SELECT * FROM users where uid=?";
+				   statement = connection.prepareStatement(sql);
+				   statement.setInt(1, rs.getInt("w_uid"));
+				   ResultSet re=statement.executeQuery();
+				   if(re.next()){
+					    Users use=new Users();
+					    use.setUid(re.getInt("uid"));
+					    use.setUname(re.getString("uname"));
+					    use.setUpwd(re.getString("upwd"));
+					    use.setUnickname(re.getString("unickname"));
+					    use.setUsex(re.getString("usex"));
+					    use.setUaddress(re.getString("uaddress"));
+					    use.setUdate(re.getDate("udate"));
+					    use.setUpic(re.getString("upic"));
+					    use.setUqq(re.getString("uqq"));
+					    use.setUedu(re.getString("uedu"));
+					    use.setUques(re.getString("uques"));
+					    use.setUrealname(re.getString("urealname"));
+					    use.setUremarks(re.getString("uremarks"));
+					    weibo.setUse(use);
+				   }
+				   //æ·»åŠ å¾®åšå¯¹åº”çš„è¯„è®ºåŠŸèƒ½
+				   ICommentDao commentdao = new CommentDaoImpl();
+				   List<Comment> comments = commentdao.findByComment(weibo.getWid());
+				   //å¯¹è¯„è®ºæ’åº
+				   comments = sortComments(comments);
+				   weibo.setComments(comments);
+				 //step6:æ·»åŠ åˆ°listé›†åˆ
+				   lisWeibo.add(weibo);
+				}
+	   } catch (SQLException e) {
+           e.printStackTrace();
+       } finally {
+           JDBCUtil.closeDB(connection, statement, null);
+       }
+	   return lisWeibo;
+	}
+	//æ˜¾ç¤ºç™»å½•è€…å¾®åšæ•°é‡
+	@Override
+	public int CountByMicroblog(int uid) {
+		Connection connection = null;
+	    PreparedStatement statement = null;
+		int countblog=0;
+		try {
+			//step1ï¼š sqlè¯­å¥
+			String sql="SELECT count(*) FROM weibo where  w_uid=?";	
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+			//step3:è·å–è¿”å›å€¼ç»“æœé›†
+			ResultSet rs=statement.executeQuery();
+			//step4:int å˜é‡
+			if(rs.next()){
+				//step6:éå†ç»“æœé›†
+				countblog=rs.getInt(1);
+			}			 
+		} catch (SQLException e) {
+	           e.printStackTrace();
+	       } finally {
+	           JDBCUtil.closeDB(connection, statement, null);
+	       }
+		return countblog;
+	}
+	@Override
+	public int DeleteWeibo(int wid, int w_uid) {
+		   Connection connection = null;
+	       PreparedStatement statement = null;
+           int a = 0;
+           try {
+        	   connection = JDBCUtil.getConn();
+               String sql = "DELETE FROM weibo where wid=? and w_uid=?";
+               System.out.println(sql);
+               statement = connection.prepareStatement(sql);
+               statement.setInt(1, wid);
+               statement.setInt(2, w_uid);
+               a=statement.executeUpdate();
+           } catch (SQLException e) {
+               e.printStackTrace();
+           } finally {
+               JDBCUtil.closeDB(connection, statement, null);
+           }
+		return a;
 	}
 
+	@Override
+	public List<Weibo> FindWeiboByuid(int uid ) {
+		//step5:åˆ›å»ºListç»“åˆå¯¹è±¡
+				List<Weibo> lisWeibo=new ArrayList<Weibo>();
+				Connection connection = null;
+			    PreparedStatement statement = null;
+			    try {
+					String sql="SELECT * FROM weibo where w_uid=? order by wdate desc";
+					connection = JDBCUtil.getConn();
+			        statement = connection.prepareStatement(sql);
+			        statement.setInt(1, uid);
+			        System.out.println("uid:"+uid);
+			        System.out.println("sql:"+sql);
+			        ResultSet rs = statement.executeQuery();
+					//step6:éå†ç»“æœé›†
+						while (rs.next()) {
+						   Weibo weibo=new Weibo();		
+						   weibo.setWid(rs.getInt("wid"));
+						   weibo.setWcontent(rs.getString("wcontent"));
+						   weibo.setWdate(rs.getString("wdate"));
+						   weibo.setWimage(rs.getString("wimage"));
+						   weibo.setWtimes(rs.getInt("wtimes"));
+						   weibo.setWremarks(rs.getString("wremarks"));
+						   weibo.setWcountcomment(rs.getInt("wcountcomment"));
+						   weibo.setW_uid(rs.getInt("w_uid"));
+						   weibo.setW_wid(rs.getInt("w_wid"));
+						   //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«ç”¨æˆ·æ”¶è—äº†
+						   ICollectionDao collectiondao = new CollectionDaoImpl();
+						   if(collectiondao.judgeColletionBywid(uid, rs.getInt("wid"))==1) {
+							   weibo.setFlag(1);
+						   }else {
+							   weibo.setFlag(0);
+						   }
+						   sql = "SELECT * FROM users where uid=?";
+						   statement = connection.prepareStatement(sql);
+						   statement.setInt(1, rs.getInt("w_uid"));
+						   ResultSet re=statement.executeQuery();
+						   if(re.next()){
+							    Users use=new Users();
+							    use.setUid(re.getInt("uid"));
+							    use.setUname(re.getString("uname"));
+							    use.setUpwd(re.getString("upwd"));
+							    use.setUnickname(re.getString("unickname"));
+							    use.setUsex(re.getString("usex"));
+							    use.setUaddress(re.getString("uaddress"));
+							    use.setUdate(re.getDate("udate"));
+							    use.setUpic(re.getString("upic"));
+							    use.setUqq(re.getString("uqq"));
+							    use.setUedu(re.getString("uedu"));
+							    use.setUques(re.getString("uques"));
+							    use.setUrealname(re.getString("urealname"));
+							    use.setUremarks(re.getString("uremarks"));
+							    weibo.setUse(use);
+						   }
+						   //æ·»åŠ å¾®åšå¯¹åº”çš„è¯„è®ºåŠŸèƒ½
+						   ICommentDao commentdao = new CommentDaoImpl();
+						   List<Comment> comments = commentdao.findByComment(weibo.getWid());
+						   //å¯¹è¯„è®ºæ’åº
+						   comments = sortComments(comments);
+						   weibo.setComments(comments);
+						   //step6:æ·»åŠ åˆ°listé›†åˆ
+						   lisWeibo.add(weibo);
+						}
+			   } catch (SQLException e) {
+		           e.printStackTrace();
+		       } finally {
+		           JDBCUtil.closeDB(connection, statement, null);
+		       }
+			   return lisWeibo;
+	}
+	
+	//å®ç°å¾®åšè½¬å‘éœ€è¦ä¸‰ä¸ªæ–¹æ³•(æ–¹æ³•ä¸€ï¼šæ’å…¥ä¸€æ¡å¾®åšï¼Œæ ‡è®°w_wid  æ–¹æ³•äºŒï¼šé€šè¿‡w_widè·å–ä¸Šä¸€æ¡å¾®åš  æ–¹æ³•ä¸‰ï¼šæ›´æ–°æ‰€æœ‰ç›¸å…³å¾®åšè½¬å‘æ¬¡æ•°)
+	//æ–¹æ³•ä¸€ï¼š
+	//å®ç°å¾®åšè½¬å‘åŠŸèƒ½,æ³¨æ„è¿™ä¸ªåŠŸèƒ½çš„è¿™æ¡è½¬å‘è®°å½•æ²¡æœ‰å®ç°è½¬å‘æ¬¡æ•°åŠ 1
+	@Override
+	public int forwardWeibo(Weibo weibo, int uid) {
+	       Connection connection = null;
+	       PreparedStatement statement = null;
+	       int  a = 0;
+	        try {
+	        	String sql="insert into weibo(wcontent,wdate,wimage,wtimes,w_uid,wremarks,wcountcomment,w_wid) values(?,now(),?,?,?,null,0,?)";
+	            connection = JDBCUtil.getConn();
+	            statement = connection.prepareStatement(sql);
+	            statement.setString(1, weibo.getWcontent());
+	            statement.setString(2, weibo.getWimage());
+	            statement.setInt(3, weibo.getWtimes()+1);
+	            statement.setInt(4, uid);
+	            statement.setInt(5, weibo.getWid());
+	            a=statement.executeUpdate();
+	        } catch (SQLException e) {
+	        	a=0;
+	            e.printStackTrace();
+	        } finally {
+	            JDBCUtil.closeDB(connection, statement, null);
+	        }
+		return a;
+	}
+	//æ–¹æ³•äºŒ  é€šè¿‡w_widè·å–åŸåˆ›å¾®åš,uidçš„ä½œç”¨ä»…ä»…æ˜¯åˆ¤æ–­æˆ‘æ˜¯ä¸æ˜¯æ”¶è—äº†è¯¥å¾®åšä¿¡æ¯
+	@Override
+	public Weibo FindByw_wid(int uid,int w_wid) {
+		Connection connection = null;
+	    PreparedStatement statement = null;
+		Weibo weibo = new Weibo();
+		try {
+			//step1ï¼š sqlè¯­å¥
+			String sql="SELECT * FROM weibo where wid=?";	
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, w_wid);
+			//step3:è·å–è¿”å›å€¼ç»“æœé›†
+			ResultSet rs=statement.executeQuery();
+			//step4:int å˜é‡
+			if(rs.next()){
+				//step6:éå†ç»“æœé›†
+				 weibo.setWid(rs.getInt("wid"));
+				   weibo.setWcontent(rs.getString("wcontent"));
+				   weibo.setWdate(rs.getString("wdate"));
+				   weibo.setWimage(rs.getString("wimage"));
+				   weibo.setWtimes(rs.getInt("wtimes"));
+				   weibo.setWremarks(rs.getString("wremarks"));
+				   weibo.setWcountcomment(rs.getInt("wcountcomment"));
+				   weibo.setW_uid(rs.getInt("w_uid"));
+				   weibo.setW_wid(rs.getInt("w_wid"));	   
+				   		   
+				   //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«ç”¨æˆ·æ”¶è—äº†
+				   ICollectionDao collectiondao = new CollectionDaoImpl();
+				   if(collectiondao.judgeColletionBywid(uid, rs.getInt("wid"))==1) {
+					   weibo.setFlag(1);
+				   }
+				   sql = "SELECT * FROM users where uid=?";
+				   statement = connection.prepareStatement(sql);
+				   statement.setInt(1, rs.getInt("w_uid"));
+				   ResultSet re=statement.executeQuery();
+				   if(re.next()){
+					    Users use=new Users();
+					    use.setUid(re.getInt("uid"));
+					    use.setUname(re.getString("uname"));
+					    use.setUpwd(re.getString("upwd"));
+					    use.setUnickname(re.getString("unickname"));
+					    use.setUsex(re.getString("usex"));
+					    use.setUaddress(re.getString("uaddress"));
+					    use.setUdate(re.getDate("udate"));
+					    use.setUpic(re.getString("upic"));
+					    use.setUqq(re.getString("uqq"));
+					    use.setUedu(re.getString("uedu"));
+					    use.setUques(re.getString("uques"));
+					    use.setUrealname(re.getString("urealname"));
+					    use.setUremarks(re.getString("uremarks"));
+					    weibo.setUse(use);
+				   }
+			}			 
+		} catch (SQLException e) {
+	           e.printStackTrace();
+	           return null;
+	       } finally {
+	           JDBCUtil.closeDB(connection, statement, null);
+	       }
+		return weibo;
+	}
+	//æ–¹æ³•ä¸‰ï¼šè¿™ä¸ªweiboæ˜¯åŸåˆ›çš„ï¼Œæ›´æ–°ç›¸å…³å¾®åšè½¬å‘æ¬¡æ•°
+	@Override
+	public int updateWtimes(Weibo weibo) {
+		  Connection connection = null;
+	       PreparedStatement statement = null;
+          int a = 0;
+          try {
+       	   connection = JDBCUtil.getConn();
+              String sql = "UPDATE weibo SET wtimes=? where wid=? or w_wid =?";
+              System.out.println(sql);
+              statement = connection.prepareStatement(sql);
+              statement.setInt(1, weibo.getWtimes()+1);
+              statement.setInt(2, weibo.getWid());
+              statement.setInt(3, weibo.getWid());
+              a=statement.executeUpdate();
+          } catch (SQLException e) {
+              e.printStackTrace();
+          } finally {
+              JDBCUtil.closeDB(connection, statement, null);
+          }
+		return a;
+	}
+	//è·å–æ‰€æœ‰æ˜¯è½¬å‘è¿™æ¡widçš„åŸåˆ›å¾®åšçš„æ‰€æœ‰å¾®åš
+	@Override
+	public List<Weibo> FindWeibosByw_wid(int uid, int wid) {
+		List<Weibo> lisWeibo=new ArrayList<Weibo>();
+		Connection connection = null;
+	    PreparedStatement statement = null;
+	    try {
+			String sql="SELECT * FROM weibo where w_wid=? order by wdate desc";
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, wid);
+	        System.out.println("uid:"+uid);
+	        System.out.println("sql:"+sql);
+	        ResultSet rs = statement.executeQuery();
+			//step6:éå†ç»“æœé›†
+				while (rs.next()) {
+				   Weibo weibo=new Weibo();		
+				   weibo.setWid(rs.getInt("wid"));
+				   weibo.setWcontent(rs.getString("wcontent"));
+				   weibo.setWdate(rs.getString("wdate"));
+				   weibo.setWimage(rs.getString("wimage"));
+				   weibo.setWtimes(rs.getInt("wtimes"));
+				   weibo.setWremarks(rs.getString("wremarks"));
+				   weibo.setWcountcomment(rs.getInt("wcountcomment"));
+				   weibo.setW_uid(rs.getInt("w_uid"));
+				  			   
+				   //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«ç”¨æˆ·æ”¶è—äº†
+				   ICollectionDao collectiondao = new CollectionDaoImpl();
+				   if(collectiondao.judgeColletionBywid(uid, rs.getInt("wid"))==1) {
+					   weibo.setFlag(1);
+				   }else {
+					   weibo.setFlag(0);
+				   }
+				   sql = "SELECT * FROM users where uid=?";
+				   statement = connection.prepareStatement(sql);
+				   statement.setInt(1, rs.getInt("w_uid"));
+				   ResultSet re=statement.executeQuery();
+				   if(re.next()){
+					    Users use=new Users();
+					    use.setUid(re.getInt("uid"));
+					    use.setUname(re.getString("uname"));
+					    use.setUpwd(re.getString("upwd"));
+					    use.setUnickname(re.getString("unickname"));
+					    use.setUsex(re.getString("usex"));
+					    use.setUaddress(re.getString("uaddress"));
+					    use.setUdate(re.getDate("udate"));
+					    use.setUpic(re.getString("upic"));
+					    use.setUqq(re.getString("uqq"));
+					    use.setUedu(re.getString("uedu"));
+					    use.setUques(re.getString("uques"));
+					    use.setUrealname(re.getString("urealname"));
+					    use.setUremarks(re.getString("uremarks"));
+					    weibo.setUse(use);
+				   }
+				   
+				   //æ·»åŠ å¾®åšå¯¹åº”çš„è¯„è®ºåŠŸèƒ½
+				   ICommentDao commentdao = new CommentDaoImpl();
+				   List<Comment> comments = commentdao.findByComment(weibo.getWid());
+				   //å¯¹è¯„è®ºæ’åº
+				   comments = sortComments(comments);
+				   weibo.setComments(comments);
+				   //step6:æ·»åŠ åˆ°listé›†åˆ
+				   lisWeibo.add(weibo);
+				}
+	   } catch (SQLException e) {
+           e.printStackTrace();
+       } finally {
+           JDBCUtil.closeDB(connection, statement, null);
+       }
+	   return lisWeibo;
+	}
 	/**
-	 * @param args
+	 * å¯¹è¯„è®ºè¿›è¡Œæ’åº
+	 * @param comments
+	 * @return
+	 *   private Integer cid;
+         private Integer c_wid;
+         private Integer c_uid;
+         private String ccontent;
+         private Date cdate;
+         private String cremarks;
+         private String cimages;
+         //è¾¨åˆ«æ˜¯ä¸æ˜¯å›å¤å“ªä¸€æ¡è¯„è®ºè¿˜æ˜¯è¯„è®ºå¾®åšä¿¡æ¯çš„ï¼Œ0ä»£è¡¨è¯„è®ºå¾®åšï¼Œä¸ä¸º0ä»£è¡¨å›å¤å“ªä¸€æ¡è¯„è®ºä¿¡æ¯
+          private Integer c_cid;
+         //è¾¨åˆ«è¯¥è¯„è®ºæ˜¯ä¸æ˜¯è¢«ç”¨æˆ·åˆ é™¤,ç”¨æˆ·åªå¯¹è‡ªå·±çš„å¾®åšçš„è¯„è®ºä¿¡æ¯æœ‰åˆ é™¤æƒåˆ©ï¼Œ0ä»£è¡¨æ²¡æœ‰åˆ é™¤ï¼Œ-1ä»£è¡¨åˆ é™¤
+          private Integer flag;
+	 * 
+	 * 
+	 * 
+	 * 
 	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-        IWeiboDao w=new WeiboDaoImpl();
-        int a =w.LifeWeibo(27);
-        System.out.println(a);
-//        PageBean p=new PageBean();
-//        p=w.FindByPage("SELECT * FROM weibo ", 2,6);
-//        List<Weibo> l=p.getData();
-//        for (Weibo weibo : l) {
-//			System.out.println(weibo.getUse().getUname());
-//		}
-	}
-
-	@Override
-	public int DeleteWeibo(int wid) {
-		// TODO Auto-generated method stub
-		String sql="delete from weibo where wid=?";
-		int a =db.execOther(sql, new Object[]{wid});
-		return a;
-	}
-
-	@Override
-	public int StopWeibo(int wid) {
-		//±¸×¢Îªno
-		//1.»ñÈ¡´ËÎ¢²©ĞÅÏ¢±¸×¢ÊÇ·ñÎªno		
-		String sql1="select * from weibo where wid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{wid});
-		int a=0;
-		try {
-			if(rs.next()){
-				if(rs.getString("wremarks")=="no"){
-					//Ö¤Ã÷´ËÎ¢²©ĞÅÏ¢ÒÑ¾­½ûÓÃ
-					return 0;					
-				}else{
-					//Ö¤Ã÷´ËÎ¢²©»¹Î´½ûÓÃ
-					String sql="update weibo set wremarks='no' where wid=?";
-					a =db.execOther(sql, new Object[]{wid});
+	private List<Comment> sortComments(List<Comment> comments) {
+		List<Comment> comms = new ArrayList<Comment>();
+		for(int i = 0;i < comments.size() ; i++) {
+			//é¦–å…ˆåˆ¤æ–­c_cidæ˜¯ä¸æ˜¯ç­‰äº0
+			Comment com = comments.get(i);
+			if(com.getC_cid()==0) {
+				comms.add(com);
+				//å†æ¥åˆ¤æ–­æœ‰æ²¡æœ‰å†…å®¹æ˜¯æ¥å›å¤ä»–çš„
+				for(int j = i+1;j < comments.size() ; j++) {
+					Comment co = comments.get(j);
+					if(co.getC_cid() == com.getCid()) {
+						comms.add(co);
+					}
 				}
 			}
-			return a;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
-            db.closeConn();			
-		}		
-	}
-
-	@Override
-	public int LifeWeibo(int wid) {
-		// TODO Auto-generated method stub
-		//1.»ñÈ¡´ËÎ¢²©ĞÅÏ¢±¸×¢ÊÇ·ñÎªno		
-		String sql1="select * from weibo where wid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{wid});
-		int a=0;
-		try {
-			if(rs.next()){
-				if(!rs.getString("wremarks").equals("no")){
-					//Ö¤Ã÷´ËÎ¢²©ĞÅÏ¢ÒÑ¾­½ûÓÃ
-					return 0;					
-				}else{
-					//Ö¤Ã÷´ËÎ¢²©»¹Î´½ûÓÃ
-					String sql="update weibo set wremarks=null where wid=?";
-					a =db.execOther(sql, new Object[]{wid});
-				}
-			}
-			return a;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
-            db.closeConn();			
-		}		
-	}
-
-	@Override
-	public int DeleteMastWeibo(String[] widc) {
-		// TODO Auto-generated method stub
-		String sql="delete from weibo where wid in ";
-		int a =db.execOther1(sql, widc);
-		return a;
+		}
+		return comms;
 	}
 
 }

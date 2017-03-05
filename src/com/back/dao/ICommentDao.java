@@ -1,12 +1,16 @@
 package com.back.dao;
 
-import com.back.filter.PageBean;
+import java.util.List;
+
+import com.back.po.Comment;
+
 
 public interface ICommentDao {
-    //·ÖÎöÏÔÊ¾ÆÀÂÛ
-	public PageBean FindByPage(String strSQL,int currentPage,int pageSize);
-	//É¾³ıÆÀÂÛ
+    //æ˜¾ç¤ºè¯„è®ºä¿¡æ¯,è¯„è®ºå“ªä¸€æ¡å¾®åšwid
+	public  List<Comment>  findByComment(int c_wid);
+	//æ·»åŠ è¯„è®º
+	public int InsertComment(Comment comm);
+	//åˆ é™¤è¯„è®º
 	public int DeleteComment(int cid);
-	//ÅúÁ¿É¾³ıÆÀÂÛ
-	public int DeleteMastComment(String[] cids);
+	
 }

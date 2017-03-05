@@ -1,12 +1,15 @@
 package com.back.dao.impl;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.back.common.JDBCUtil;
 import com.back.dao.IAdminDao;
 import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
 import com.back.po.Admins;
 import com.back.po.Permissions;
 
@@ -80,13 +83,13 @@ public class AdminDaoImpl implements IAdminDao {
 	}
 	@Override
 	public PageBean AdminsList(String strSQL, int currentPage, int pageSize) {
-		//²½Öè1£º´´½¨Ò»¸öPageBean¶ÔÏó		
+		//ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½PageBeanï¿½ï¿½ï¿½ï¿½		
 		PageBean pb = new PageBean();
-		//²½Öè2£º´´½¨Ò»¸öSQLÓï¾ä£¬ÓÃÀ´»ñÈ¡emp±íÖÐ¼ÇÂ¼µÄ¸öÊý
+		//ï¿½ï¿½ï¿½ï¿½2ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½SQLï¿½ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡empï¿½ï¿½ï¿½Ð¼ï¿½Â¼ï¿½Ä¸ï¿½ï¿½ï¿½
 		String strSQL1 = strSQL;
 		strSQL1 = strSQL1.substring(strSQL1.toLowerCase().indexOf("from"));
 		strSQL1 = "select count(*) "+strSQL1;
-		//²½Öè3£ºÖ´ÐÐSQLÓï¾äµÃµ½½á¹û²¢½«½á¹û¸³Öµ¸øpb¶ÔÏóµÄtotalRows;
+		//ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½Ö´ï¿½ï¿½SQLï¿½ï¿½ï¿½Ãµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½pbï¿½ï¿½ï¿½ï¿½ï¿½totalRows;
 		ResultSet rs = db.execQuery(strSQL1, new Object[]{});
 		try {
 			rs.next();			
@@ -95,12 +98,12 @@ public class AdminDaoImpl implements IAdminDao {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
-		//²½Öè4£ºÐèÒªÎªpb¶ÔÏóµÄdataÊôÐÔ¸³Öµ,Ê×ÏÈ»ñÈ¡±¾Ò³µÄµÚÒ»ÌõÊý¾ÝµÄÐÐ±ê
+		//ï¿½ï¿½ï¿½ï¿½4ï¿½ï¿½ï¿½ï¿½ÒªÎªpbï¿½ï¿½ï¿½ï¿½ï¿½dataï¿½ï¿½ï¿½Ô¸ï¿½Öµ,ï¿½ï¿½ï¿½È»ï¿½È¡ï¿½ï¿½Ò³ï¿½Äµï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ýµï¿½ï¿½Ð±ï¿½
 		int start = (currentPage-1)*pageSize;
-		//²½Öè5£º´´½¨¶¯Ì¬µÄSQLÓï¾ä
+		//ï¿½ï¿½ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¬ï¿½ï¿½SQLï¿½ï¿½ï¿½
 		strSQL = strSQL+" limit ?,?";
 		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//²½Öè6£º½«»ñÈ¡µÄ½á¹û¼¯½øÐÐ·â×°
+		//ï¿½ï¿½ï¿½ï¿½6ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð·ï¿½×°
 		List<Admins> lstAdmin = new ArrayList<Admins>();
 		Admins admin=null;
 		try {
@@ -131,12 +134,12 @@ public class AdminDaoImpl implements IAdminDao {
 		} finally{
 			db.closeConn();	
 		}		
-		//²½Öè7£º½«»ñÈ¡µ½µÄ±¾Ò³Êý¾Ý¸³Öµ¸øpb¶ÔÏóµÄdataÊôÐÔ
+		//ï¿½ï¿½ï¿½ï¿½7ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½Ä±ï¿½Ò³ï¿½ï¿½ï¿½Ý¸ï¿½Öµï¿½ï¿½pbï¿½ï¿½ï¿½ï¿½ï¿½dataï¿½ï¿½ï¿½ï¿½
 		pb.setData(lstAdmin);		
-		//²½Öè8£ºÎªÆäÓàÊôÐÔ¸³Öµ,ÎÞÐèÎªtotalPages¸³Öµ£¬ÒÔÎªtotalRowsºÍpageSizeÒÑ¾­±»¸³Öµ
+		//ï¿½ï¿½ï¿½ï¿½8ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¸ï¿½Öµ,ï¿½ï¿½ï¿½ï¿½ÎªtotalPagesï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ÎªtotalRowsï¿½ï¿½pageSizeï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
 		pb.setCurrentPage(currentPage);
 		pb.setPageSize(pageSize);				
-		//²½Öè9£º½«·â×°ºÃµÄpb¶ÔÏó·µ»Ø
+		//ï¿½ï¿½ï¿½ï¿½9ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½Ãµï¿½pbï¿½ï¿½ï¿½ó·µ»ï¿½
 		return pb;
 	}
 
@@ -153,40 +156,48 @@ public class AdminDaoImpl implements IAdminDao {
 
 	@Override
 	public Admins LoginBackStrone(String aname, String apwd) {
-		// TODO Auto-generated method stub
-		String sql="SELECT * FROM admins where aname=? and apwd=?";
-		ResultSet rs=db.execQuery(sql, new Object[]{aname,apwd});
-		Admins admin=new Admins();
+		PreparedStatement statement = null;
+		Connection connection = null;
+		ResultSet rs=null;
 		try {
+			connection = JDBCUtil.getConn();
+			String sql="SELECT * FROM admins where aname=? and apwd=?";
+			statement = connection.prepareStatement(sql);
+			statement.setString(1, aname);
+			statement.setString(2, apwd);
+		    rs=statement.executeQuery();
+			Admins admin=new Admins();
 			if(rs.next()){
 				admin=new Admins();
 				admin.setAid(rs.getInt("aid"));
 				admin.setA_pid(rs.getInt("a_pid"));
 				admin.setAname(rs.getString("aname"));
 				admin.setApwd(rs.getString("apwd"));
-				admin.setAdate(rs.getString("adate"));
+				admin.setAdate(rs.getDate("adate"));
 				admin.setArealname(rs.getString("arealname"));
 				admin.setAsex(rs.getString("asex"));
 				admin.setAremarks(rs.getString("aremarks"));
 				Permissions permission=new Permissions(); 
-				ResultSet re=db.execQuery("SELECT * FROM permissions where pid=?", new Object[]{rs.getInt("a_pid")});
+				String sql1="SELECT * FROM permissions where pid=?";
+				statement = connection.prepareStatement(sql1);
+				statement.setInt(1, rs.getInt("a_pid"));
+				ResultSet re=statement.executeQuery();
 				   if(re.next()){
 					   permission.setPid(re.getInt("pid"));
 					   permission.setPname(re.getString("pname"));
 					   permission.setPcontent(re.getString("pcontent"));
 					   permission.setPremarks(re.getString("premarks"));
 					   admin.setPermission(permission);
-				   }			
+				   }
 				return admin;
 			}else{
 			    return null;
 			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}finally{
-			db.closeConn();
+			JDBCUtil.closeDB(connection, statement, rs);
 		}
 	}
 

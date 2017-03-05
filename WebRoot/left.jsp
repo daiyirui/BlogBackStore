@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="gbk"%>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
@@ -31,88 +31,88 @@ function opep(){
       <h1 id="sidebar-title"><a href="#">Simpla Admin</a></h1>     
       <a href="#"><img id="logo" src="images/log.png" alt="Simpla Admin logo" /></a>    
        <c:if test="${!empty sessionScope.admins }">
-          <div id="profile-links"> ���� ��ӭ${sessionScope.admins.aname} ��¼!
+          <div id="profile-links"> 您好 欢迎${sessionScope.admins.aname} 登录!
      <br />
         <br />
         <a href="" title="View the Site" target="_blank">View the Site</a> | <a href="/SevenUpLaptopStore/admins!logout.action" title="Sign Out" target="_parent">Sign Out</a>
        </div>
-         <c:if test="${sessionScope.admins.permission.pname eq '����Ա'}">
+         <c:if test="${sessionScope.admins.permission.pname eq '管理员'}">
              <ul id="main-nav">
         <!-- Accordion Menu -->
-        <li><a href="#" class="nav-top-item"> ǰ̨�û����� </a> 
+        <li><a href="#" class="nav-top-item"> 前台用户管理 </a> 
           <ul>
-            <li><a class="current" href="ListUserServlet" target="main">ǰ̨�û��б�</a></li>
+            <li><a class="current" href="ListUserServlet" target="main">前台用户列表</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ��̨�û����� </a>
+        <li> <a href="#" class="nav-top-item"> 后台用户管理 </a>
           <ul>
-            <li><a href="ListAdminsServlet" target="main">��̨�û��б�</a></li>
-            <li><a href="IntoBackUserServlet" target="main">���Ӻ�̨�û�</a></li>
-             <li><a href="PermissionListServlet" target="main">��̨Ȩ���б�</a></li>
-             <li><a href="addpermission.jsp" target="main">��̨Ȩ������</a></li>
+            <li><a href="ListAdminsServlet" target="main">后台用户列表</a></li>
+            <li><a href="IntoBackUserServlet" target="main">添加后台用户</a></li>
+             <li><a href="PermissionListServlet" target="main">后台权限列表</a></li>
+             <li><a href="addpermission.jsp" target="main">后台权限添加</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ���۹��� </a>
+        <li> <a href="#" class="nav-top-item"> 评论管理 </a>
           <ul>
-            <li><a href="ListCommentServlet" target="main">�����б�</a></li>
+            <li><a href="ListCommentServlet" target="main">评论列表</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ΢������ </a>
+        <li> <a href="#" class="nav-top-item"> 微博管理 </a>
           <ul>
-            <li><a href="ListWeiboServlet" target="main">΢���б�</a></li>
+            <li><a href="ListWeiboServlet" target="main">微博列表</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ���ѹ�ע�ȱȽ� </a>
+        <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="ListRelationServlet" target="main">��ע���б�</a></li>
+            <li><a href="ListRelationServlet" target="main">关注度列表</a></li>
             
     
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ΢������ </a>
+        <li> <a href="#" class="nav-top-item"> 微博热议 </a>
           <ul>
-          <li><a href="addhotblog.jsp" target="main">����΢������</a></li>
-            <li><a href="ListBlogHotServlet" target="main">΢�������б�</a></li>
+          <li><a href="addhotblog.jsp" target="main">添加微博热议</a></li>
+            <li><a href="ListBlogHotServlet" target="main">微博热议列表</a></li>
           </ul>
         </li>
       
-        	 <li> <a href="#" class="nav-top-item"> �ղع��� </a>
+        	 <li> <a href="#" class="nav-top-item"> 收藏管理 </a>
           <ul>
-            <li><a href="ListCollectionServlet" target="main">�ղ��б�</a></li>
+            <li><a href="ListCollectionServlet" target="main">收藏列表</a></li>
           </ul>
         </li>       
       </ul>
          </c:if>
-      <c:if test="${sessionScope.admins.permission.pname eq '��̨�û�'}">
+      <c:if test="${sessionScope.admins.permission.pname eq '后台用户'}">
          <ul id="main-nav">
         <!-- Accordion Menu -->
-        <li><a href="#" class="nav-top-item"> ǰ̨�û����� </a> 
+        <li><a href="#" class="nav-top-item"> 前台用户管理 </a> 
           <ul>
-            <li><a class="current" href="ListUserServlet" target="main">ǰ̨�û��б�</a></li>
+            <li><a class="current" href="ListUserServlet" target="main">前台用户列表</a></li>
           </ul>
         </li>
        
-        <li> <a href="#" class="nav-top-item"> ���۹��� </a>
+        <li> <a href="#" class="nav-top-item"> 评论管理 </a>
           <ul>
-            <li><a href="ListCommentServlet" target="main">�����б�</a></li>
+            <li><a href="ListCommentServlet" target="main">评论列表</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ΢������ </a>
+        <li> <a href="#" class="nav-top-item"> 微博管理 </a>
           <ul>
-            <li><a href="ListWeiboServlet" target="main">΢���б�</a></li>
+            <li><a href="ListWeiboServlet" target="main">微博列表</a></li>
           </ul>
         </li>
-        <li> <a href="#" class="nav-top-item"> ���ѹ�ע�ȱȽ� </a>
+        <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="ListRelationServlet" target="main">��ע���б�</a></li>
+            <li><a href="ListRelationServlet" target="main">关注度列表</a></li>
             
     
           </ul>
         </li>
         
-        	 <li> <a href="#" class="nav-top-item"> �ղع��� </a>
+        	 <li> <a href="#" class="nav-top-item"> 收藏管理 </a>
           <ul>
-            <li><a href="ListCollectionServlet" target="main">�ղ��б�</a></li>
+            <li><a href="ListCollectionServlet" target="main">收藏列表</a></li>
           </ul>
         </li>       
       </ul>

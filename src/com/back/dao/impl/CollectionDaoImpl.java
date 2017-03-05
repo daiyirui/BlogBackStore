@@ -1,69 +1,120 @@
 package com.back.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.back.dao.ICollectionDao;
-import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
-import com.back.po.Collection;
-import com.back.po.Users;
+import com.back.common.JDBCUtil;
+import com.microblog.dao.ICollectionDao;
+import com.microblog.po.Collection;
+import com.microblog.po.Users;
 
 public class CollectionDaoImpl implements ICollectionDao {
-    DBConn db;
-	public CollectionDaoImpl() {
-		// TODO Auto-generated constructor stub
-		db=new DBConn();
-	}
 
 	@Override
-	public PageBean FindByPage(String strSQL, int currentPage, int pageSize) {
-		// TODO Auto-generated method stub
-		//step1:´´½¨pagebean¶ÔÏó,ÎªÆäÎå¸öÊôĞÔ¸³Öµ
-		PageBean pb=new PageBean();
-		//step2:sqlÓï¾ä£¬ÓÃÀ´»ñÈ¡weibo±íÖĞ¼ÇÂ¼ÊıÁ¿ count(*)   SELECT * FROM weibo order by wdate desc
-		String strSql1=strSQL;
-		strSql1=strSql1.substring(strSql1.toLowerCase().indexOf("from"));
-		strSql1 = "select count(*) "+strSql1;
-		System.out.println("SqlCount:"+strSql1);
-		//step3:Ö´ĞĞsqlÓï¾äµÃµ½½á¹û²¢½«Æä½á¹û¸³Öµ¸øpbµÄtotalRows±äÁ¿£»
-		ResultSet rs=db.execQuery(strSql1, new Object[]{});
+	public int InsertCollection(Collection coll) {
+		 Connection connection = null;
+	       PreparedStatement statement = null;
+	       int  a = 0;
+	        try {
+	        	String sql="insert into collection(l_uid,lcontent,ldate,limages,lremarks,l_wid) values(?,?,now(),?,null,?)";
+	            connection = JDBCUtil.getConn();
+	            statement = connection.prepareStatement(sql);
+	            statement.setInt(1, coll.getL_uid());
+	            statement.setString(2, coll.getLcontent());
+	            statement.setString(3, coll.getLimages());
+	            statement.setInt(4, coll.getL_wid());
+	            a=statement.executeUpdate();
+	        } catch (SQLException e) {
+	        	a=0;
+	            e.printStackTrace();
+	        } finally {
+	            JDBCUtil.closeDB(connection, statement, null);
+	        }
+		return a;
+	}
+
+
+	@Override
+	public int DeleteCollection(int uid,int wid) {
+		 Connection connection = null;
+	       PreparedStatement statement = null;
+         int a = 0;
+         try {
+      	   connection = JDBCUtil.getConn();
+             String sql = "DELETE FROM collection where l_uid=? and l_wid=?";
+             System.out.println(sql);
+             statement = connection.prepareStatement(sql);
+             statement.setInt(1, uid);
+             statement.setInt(2, wid);
+             a=statement.executeUpdate();
+         } catch (SQLException e) {
+             e.printStackTrace();
+         } finally {
+             JDBCUtil.closeDB(connection, statement, null);
+         }
+		return a;
+	}
+
+	
+
+	@Override
+	public int CountCollectionByUid(int uid) {
+		Connection connection = null;
+	    PreparedStatement statement = null;
+		int count=0;
 		try {
+			//step1ï¼š sqlè¯­å¥
+			String sql="SELECT count(*) FROM collection where  l_uid=?";	
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+			//step3:è·å–è¿”å›å€¼ç»“æœé›†
+			ResultSet rs=statement.executeQuery();
+			//step4:int å˜é‡
 			if(rs.next()){
-				pb.setTotalRows(rs.getInt(1));
-			}
+				//step6:éå†ç»“æœé›†
+				count=rs.getInt(1);
+			}			 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			pb.setTotalRows(0);
-		}
-		//step4:ÎªpbµÄdataÊôĞÔ¸³Öµ£¬Ê×ÏÈÎª»ñÈ¡±¾Ò³µÚÒ»Ìõ¼ÇÂ¼ÉèÖÃĞĞ±ê
-		int start=(currentPage-1)*pageSize;
-		//step5:´´½¨¸³ÖµdataµÄsqlÓï¾ä
-		strSQL=strSQL+" limit ?,? ";
-		rs=db.execQuery(strSQL, new Object[]{start,pageSize});
-		//step6:»ñÈ¡data½á¹û¼¯ºÏ
-		List<Collection> lisColl=new ArrayList<Collection>();
-		Collection coll=null;
-		try {
-			while (rs.next()) {
-				coll=new Collection();
-				coll.setLid(rs.getInt("lid"));
-				coll.setLcontent(rs.getString("lcontent"));
-				coll.setLdate(rs.getString("ldate"));
-				String s="";//
-				if(rs.getString("limages")!=null){
-					s=rs.getString("limages").replaceAll("/Microblog/","");
-					coll.setLimages(s);
-				}else{
-					coll.setLimages(rs.getString("limages"));	
-				}				
-				coll.setLremarks(rs.getString("lremarks"));
-				coll.setL_uid(rs.getInt("l_uid"));			
-				ResultSet re=db.execQuery("SELECT * FROM users where uid=?", new Object[]{rs.getInt("l_uid")});
-				if(re.next()){
+	           e.printStackTrace();
+	       } finally {
+	           JDBCUtil.closeDB(connection, statement, null);
+	       }
+		return count;
+	}
+
+    //è·å–ç™»å½•ç”¨æˆ·çš„æ‰€æœ‰æ”¶è—
+	@Override
+	public List<Collection> FindCollectionByuid(int uid) {
+		List<Collection> collections=new ArrayList<Collection>();
+		Connection connection = null;
+	    PreparedStatement statement = null;
+	    try {
+			String sql="SELECT * FROM collection where l_uid=? order by ldate desc";
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+	        System.out.println("uid:"+uid);
+	        System.out.println("sql:"+sql);
+	        ResultSet rs = statement.executeQuery();
+			//step6:éå†ç»“æœé›†
+				while (rs.next()) {
+					Collection collection=new Collection();		
+					collection.setLid(rs.getInt("lid"));
+					collection.setL_uid(rs.getInt("l_uid"));
+					collection.setLcontent(rs.getString("lcontent"));
+					collection.setLdate(rs.getString("ldate"));
+					collection.setLimages(rs.getString("limages"));
+					collection.setL_wid(rs.getInt("l_wid"));
+				    sql = "SELECT * FROM users where uid=?";
+				    statement = connection.prepareStatement(sql);
+				    statement.setInt(1, rs.getInt("l_uid"));
+				   ResultSet re=statement.executeQuery();
+				   if(re.next()){
 					    Users use=new Users();
 					    use.setUid(re.getInt("uid"));
 					    use.setUname(re.getString("uname"));
@@ -71,107 +122,55 @@ public class CollectionDaoImpl implements ICollectionDao {
 					    use.setUnickname(re.getString("unickname"));
 					    use.setUsex(re.getString("usex"));
 					    use.setUaddress(re.getString("uaddress"));
-					    use.setUdate(re.getString("udate"));
+					    use.setUdate(re.getDate("udate"));
 					    use.setUpic(re.getString("upic"));
 					    use.setUqq(re.getString("uqq"));
 					    use.setUedu(re.getString("uedu"));
 					    use.setUques(re.getString("uques"));
-					    use.setUrealname(re.getString("urealname"));					    
+					    use.setUrealname(re.getString("urealname"));
 					    use.setUremarks(re.getString("uremarks"));
-					    coll.setUse(use);
-				}			
-				lisColl.add(coll);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			db.closeConn();
-		}
-		//step7:¸³ÖµÏàÓ¦ÊôĞÔ
-		pb.setData(lisColl);
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);
-		//step*:·µ»Ø½á¹û
-		return pb;
+					    collection.setUse(use);
+				   }
+				   //step6:æ·»åŠ åˆ°listé›†åˆ
+				   collections.add(collection);
+				}
+	   } catch (SQLException e) {
+           e.printStackTrace();
+       } finally {
+           JDBCUtil.closeDB(connection, statement, null);
+       }
+	   return collections;
 	}
 
+    //åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«æˆ‘æ”¶è—äº†
 	@Override
-	public int DeleteMastCollection(String[] uidc) {
-		// TODO Auto-generated method stub
-		String sql="delete from collection where lid in";
-		int a =db.execOther1(sql, uidc);
-		return a;
-	}
-
-	@Override
-	public int DeleteCollection(int lid) {
-		// TODO Auto-generated method stub
-		String sql="delete from collection where lid=?";
-		int a =db.execOther(sql, new Object[]{lid});
-		return a;
-	}
-
-	@Override
-	public int StopCollection(int lid) {
-		// TODO Auto-generated method stub
-		String sql1="select * from collection where lid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{lid});
-		int a=0;
+	public int judgeColletionBywid(int uid, int wid) {
+		System.out.println("uid"+uid);
+		System.out.println("wid"+wid);
+		Connection connection = null;
+	    PreparedStatement statement = null;
+		int count=0;
 		try {
+			//step1ï¼š sqlè¯­å¥
+			String sql="SELECT count(*) FROM collection where  l_uid=? and l_wid =?";	
+			connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+	        statement.setInt(2, wid);
+			//step3:è·å–è¿”å›å€¼ç»“æœé›†
+			ResultSet rs=statement.executeQuery();
+			//step4:int å˜é‡
 			if(rs.next()){
-				//Ö¤Ã÷Ê×ÏÈ´ËÓÃ»§´æÔÚ£¬È»ºó²é¿´Æä±¸×¢ÊÇ·ñÒÑ¾­±»½ûÓÃÁË
-				if(rs.getString("lremarks")=="no"){
-					//Ö¤Ã÷ÒÑ¾­½ûÓÃ²ÅÓÃ»§ÁË
-					a= 0;
-				}else{
-					String sql="update collection set lremarks='no' where lid=?";
-					a =db.execOther(sql, new Object[]{lid});				
-				}				
-			}			
-			return a;
+				//step6:éå†ç»“æœé›†
+				count=rs.getInt(1);
+			}			 
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
-			db.closeConn();
-		}		
+	           e.printStackTrace();
+	       } finally {
+	           JDBCUtil.closeDB(connection, statement, null);
+	       }
+		return count;
 	}
 
-	@Override
-	public int LifeCollection(int lid) {
-		// TODO Auto-generated method stub
-		String sql1="select * from collection where lid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{lid});
-		int a=0;
-		try {
-			if(rs.next()){
-				//Ö¤Ã÷Ê×ÏÈ´ËÓÃ»§´æÔÚ£¬È»ºó²é¿´Æä±¸×¢ÊÇ·ñÒÑ¾­±»½ûÓÃÁË
-				if(!rs.getString("lremarks").equals("no")){
-					//Ö¤Ã÷ÒÑ¾­½ûÓÃ²ÅÓÃ»§ÁË
-					a= 0;
-				}else{
-					String sql="update collection set lremarks='null' where lid=?";
-					a =db.execOther(sql, new Object[]{lid});				
-				}				
-			}			
-			return a;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
-			db.closeConn();
-		}		
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
+   
 }

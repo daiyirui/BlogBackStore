@@ -1,127 +1,324 @@
 package com.back.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.back.dao.IRelationsDao;
-import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
-import com.back.po.Relations;
-import com.back.po.Users;
+import com.back.common.JDBCUtil;
+import com.microblog.dao.IRelationsDao;
+import com.microblog.po.Users;
 
 public class RelationsDaoImpl implements IRelationsDao {
-    DBConn db;
-	public RelationsDaoImpl() {
-		// TODO Auto-generated constructor stub
-		db=new DBConn();
-	}
-  //SELECT distinct g_id,(select count(*) from relations where g_id=b.g_id),(select uname from users where uid=b.g_id),(select udate from users where uid=b.g_id) FROM relations as b order by (select count(*) from relations where g_id=b.g_id) desc
+	
+	@SuppressWarnings("resource")
 	@Override
-	public PageBean FindByPage(String strSQL, int currentPage, int pageSize) {
-		//²½Öè1£º´´½¨Ò»¸öPageBean¶ÔÏó		
-		PageBean pb = new PageBean();		
-		//²½Öè3£ºÖ´ĞĞSQLÓï¾äµÃµ½½á¹û²¢½«½á¹û¸³Öµ¸øpb¶ÔÏóµÄtotalRows;
-		ResultSet rs = db.execQuery("select count(*) from relations", new Object[]{});
-		try {
-			rs.next();			
-			pb.setTotalRows(rs.getInt(1));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		//²½Öè4£ºĞèÒªÎªpb¶ÔÏóµÄdataÊôĞÔ¸³Öµ,Ê×ÏÈ»ñÈ¡±¾Ò³µÄµÚÒ»ÌõÊı¾İµÄĞĞ±ê
-		int start = (currentPage-1)*pageSize;
-		//²½Öè5£º´´½¨¶¯Ì¬µÄSQLÓï¾ä
-		strSQL = strSQL+" limit ?,?";
-		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//²½Öè6£º½«»ñÈ¡µÄ½á¹û¼¯½øĞĞ·â×°
-		List<Relations> lstRel = new ArrayList<Relations>();
-		Relations relation=null;
-		try {
-			while(rs.next()){
-				relation=new Relations();
-				relation.setG_id(rs.getInt(1));
-				relation.setUsertimes(rs.getInt(2));
-				Users use=new Users();
-				use.setUname(rs.getString(3));
-				use.setUdate(rs.getString(4));
-				relation.setUse(use);
-				relation.setUselist(this.FindByuid(rs.getInt("g_id")));				
-				lstRel.add(relation);
-				
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			db.closeConn();	
-		}		
-		//²½Öè7£º½«»ñÈ¡µ½µÄ±¾Ò³Êı¾İ¸³Öµ¸øpb¶ÔÏóµÄdataÊôĞÔ
-		pb.setData(lstRel);		
-		//²½Öè8£ºÎªÆäÓàÊôĞÔ¸³Öµ,ÎŞĞèÎªtotalPages¸³Öµ£¬ÒÔÎªtotalRowsºÍpageSizeÒÑ¾­±»¸³Öµ
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);				
-		//²½Öè9£º½«·â×°ºÃµÄpb¶ÔÏó·µ»Ø
-		return pb;
-	}
-
-	@Override
-	public List<Users> FindByuid(int uid) {
-		// TODO Auto-generated method stub
-		List<Users> uselist=new ArrayList<Users>();
-		Users use=null;
-		ResultSet re=db.execQuery("SELECT * FROM relations where g_id=?",new Object[]{uid});
-		try {
-			while (re.next()) {
-				use=new Users();
-				ResultSet rt=db.execQuery("select * from users where uid=?",new Object[]{re.getInt("r_id")});
-				while (rt.next()) {
-					use.setUid(rt.getInt("uid"));
-					use.setUname(rt.getString("uname"));
-					use.setUpwd(rt.getString("upwd"));
-					use.setUnickname(rt.getString("unickname"));
-					use.setUsex(rt.getString("usex"));
-					use.setUaddress(rt.getString("uaddress"));
-					use.setUdate(rt.getString("udate"));
-					use.setUpic(rt.getString("upic"));
-					use.setUqq(rt.getString("uqq"));
-					use.setUedu(rt.getString("uedu"));
-					use.setUques(rt.getString("uques"));
-					use.setUrealname(rt.getString("urealname"));
-					use.setUremarks(rt.getString("uremarks"));
-					uselist.add(use);
+	public int DeleteRelationByuid(int uid, int gid) {
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		//é¦–å…ˆåˆ¤æ–­æ˜¯å•å‘è¿˜æ˜¯åŒä¼‘å…³æ³¨
+		try { 
+			    String sql="SELECT * FROM relations where r_id=? and g_id=?";
+				 connection = JDBCUtil.getConn();
+				 statement = connection.prepareStatement(sql);
+				 statement.setInt(1,gid);
+				 statement.setInt(2,uid);
+				 ResultSet rs=statement.executeQuery();
+			if(rs.next()){
+				//è¯æ˜æ˜¯åŒå‘å…³æ³¨
+				int id=rs.getInt(1);
+				sql="update relations set rstate=0 where rid=?";
+				statement = connection.prepareStatement(sql);
+				statement.setInt(1,id);
+				int a=statement.executeUpdate();
+				if(a==1){
+					return 1;
+				}else{
+					return 0;
 				}
 			}
-			return uselist;	
+			//æ— è®ºæ˜¯å•è¿˜æ˜¯åŒä¼‘ï¼Œéƒ½éœ€è¦åˆ é™¤ç™»é™†è€…å…³æ³¨çš„ä¿¡æ¯
+			sql="delete from relations where r_id=? and g_id=?";
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1,uid);
+			statement.setInt(1,gid);
+			int b=statement.executeUpdate();
+			return b;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}		
+	}
+	/*
+	 * 1.æ£€æŸ¥æ­¤ç”¨æˆ·æ˜¯å¦å·²ç»åœ¨æˆ‘çš„å¥½å‹ä¸­ï¼šSELECT * FROM relations where r_id=1 and g_id=2
+	 *    å¦‚æœæœ‰è¿”å›å€¼è¯æ˜å·²ç»æ·»åŠ è¿‡ï¼Œè¿”å›0ï¼Œå¦‚æœæ²¡æœ‰åˆ™æ‰§è¡Œä¸‹ä¸€æ­¥
+	 * 2.åˆ¤æ–­æ­¤ç”¨æˆ·æ˜¯å¦å·²ç»å…³æ³¨æˆ‘äº†(åœ¨æˆ‘å…³æ³¨ä»–ä¹‹å‰)ï¼šSELECT * FROM relations where r_id=2 and g_id=1
+	 * 3.å¦‚æœæœ‰è¿”å›å€¼ï¼Œè¯æ˜å·²ç»å…³æ³¨æˆ‘äº†ï¼Œè¯´æ˜æ˜¯åŒå‘å…³æ³¨ï¼Œæ›´æ”¹rstate=1
+	 *   update  relations set rstate=1 where 
+	 *   insert into relations values(null,1,2,1);
+	 * 4å¦‚æœæ²¡æœ‰è¿”å›å€¼ï¼Œè¯æ˜å•å‘å…³æ³¨ï¼Œåªåšæ·»åŠ æ“ä½œ
+	 * insert into relations values(null,1,2,0);    
+	 */
+	@SuppressWarnings("resource")
+	@Override
+	public int InsertRelation(int uid, int gid) {
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		 //åˆ¤æ–­å¯¹æ–¹æ˜¯ä¸æ˜¯å…³æ³¨äº†æˆ‘  ,1ä»£è¡¨å…³æ³¨,0ä»£è¡¨æ²¡æœ‰å…³æ³¨
+		 int flag = FindRelationByuid(uid,gid);
+		try {
+			    connection=JDBCUtil.getConn();
+				if(flag>0){
+					//3,è¯æ˜æ˜¯åŒå‘å…³æ³¨
+					String sql1="update relations set rstate=1 where r_id=? and g_id=?";
+					statement=connection.prepareStatement(sql1);
+					statement.setInt(1, gid);
+					statement.setInt(2, uid);
+					System.out.println("sql1:"+sql1);
+					int a=statement.executeUpdate();
+					System.out.println("a:"+a);
+					if(a==1){
+						sql1="insert into relations(r_id,g_id,rstate) values(?,?,?)";
+						statement=connection.prepareStatement(sql1);
+						statement.setInt(1, uid);
+						statement.setInt(2, gid);
+						statement.setInt(3,flag);
+						a=statement.executeUpdate();
+						if(a==1){
+							return 1;
+						}else{
+							return 0;
+						}
+					}else{
+						return 0;
+					}
+				}else{
+					//4è¯æ˜æ˜¯å•å‘å…³æ³¨
+					String	sql2="insert into relations(r_id,g_id,rstate) values(?,?,?)";
+					statement=connection.prepareStatement(sql2);
+					statement.setInt(1, uid);
+					statement.setInt(2, gid);
+					statement.setInt(3,flag);
+					int b=statement.executeUpdate();
+					if(b==1){
+						return 1;
+					}else{
+						return 0;
+					}
+				}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}
+	}
+	 //æ˜¾ç¤ºç™»å½•è€…å…³æ³¨äººçš„æ•°é‡,åŒ…æ‹¬äº†åŒå‘å…³æ³¨çš„æƒ…å†µ
+	@Override
+	public int CountByAttention(int uid) {
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		//step1:sqlè¯­å¥
+		int flag = 0;
+		try{
+		    String sql="SELECT count(*) FROM relations where g_id!=? and r_id=?";
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,uid);
+			 statement.setInt(2,uid);
+			 ResultSet rs=statement.executeQuery();
+			while(rs.next()){
+				//1.è¯æ˜å¯¹æ–¹å·²ç»å…³æ³¨æˆ‘äº†
+				flag =rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}		
+		return flag;
+	}
+	//æŸ¥è¯¢æˆ‘çš„ç²‰ä¸ï¼ŒåŒ…æ‹¬äº†åŒå‘å…³æ³¨çš„æƒ…å†µ
+	@Override
+	public int CountByVermicelli(int uid) {
+		
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		//step1:sqlè¯­å¥
+		int flag = 0;
+		try{
+
+			String sql="SELECT count(*) FROM relations where g_id=? and r_id!=?";
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,uid);
+			 statement.setInt(2,uid);
+			 ResultSet rs=statement.executeQuery();
+			while(rs.next()){
+				//1.è¯æ˜å¯¹æ–¹å·²ç»å…³æ³¨æˆ‘äº†
+				flag =rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}		
+		return flag;
+	}
+	//åˆ¤æ–­å¯¹æ–¹æ˜¯å¦å·²ç»å…³æ³¨æˆ‘å•¦     (r_idå…³æ³¨äº†g_id)(æ‰€ä»¥è¿™é‡Œåˆ¤æ–­gidæ˜¯å¦å…³æ³¨äº†uid)
+	@Override
+	public int FindRelationByuid(int uid, int gid) {
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		//step1:sqlè¯­å¥
+		int flag = 0;
+		try{
+			 String sql="SELECT count(*) FROM relations where g_id=? and r_id=?";
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,uid);
+			 statement.setInt(2,gid);
+			 ResultSet rs=statement.executeQuery();
+			while(rs.next()){
+				//1.è¯æ˜å¯¹æ–¹å·²ç»å…³æ³¨æˆ‘äº†
+				flag =rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}		
+		return flag;
+	}
+	//è·å–æˆ‘å…³æ³¨çš„äººçš„ä¿¡æ¯
+	@Override
+	public List<Users> FindAllMyInterestByuid(int uid) {
+		 List<Users> users = null;
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		 String sql="SELECT * FROM relations where r_id=? ";
+		 try{
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,uid);
+			 ResultSet rsr=statement.executeQuery();
+			 users = new ArrayList<Users>();
+			 while(rsr.next()){
+				 String sql1="SELECT * FROM users where uid=? ";
+				 statement = connection.prepareStatement(sql1);
+				 statement.setInt(1, rsr.getInt("g_id"));
+				 ResultSet rs=statement.executeQuery();
+				 while(rs.next()) {
+						Users user = new Users();
+						user.setUid(rs.getInt("uid"));
+						user.setUname(rs.getString("uname"));
+						user.setUpwd(rs.getString("upwd"));
+						user.setUnickname(rs.getString("unickname"));
+						user.setUsex(rs.getString("usex"));
+						user.setUaddress(rs.getString("uaddress"));
+						user.setUdate(rs.getDate("udate"));
+						user.setUqq(rs.getString("uqq"));
+						user.setUedu(rs.getString("uedu"));
+						user.setUpic(rs.getString("upic"));
+						user.setUques(rs.getString("uques"));
+						user.setUrealname(rs.getString("urealname"));
+						user.setUremarks(rs.getString("uremarks"));
+						users.add(user);
+					}
+			 }
+			return users;
+		  } catch (SQLException e) {
 			e.printStackTrace();
 			return null;
 		}finally{
-			db.closeConn();
-		}
-		
+			JDBCUtil.closeDB(connection, statement, null);
+		}	
 	}
-
-	/**
-	 * @param args
-	 */
+	
+	@Override
+	public  List<Users> FindAllMyFansByuid(int uid) {
+		 List<Users> users = null;
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		 String sql="SELECT * FROM relations where g_id=? ";
+		 try{
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,uid);
+			 ResultSet rsr=statement.executeQuery();
+			 users = new ArrayList<Users>();
+			 while(rsr.next()){
+				 String sql1="SELECT * FROM users where uid=? ";
+				 statement = connection.prepareStatement(sql1);
+				 statement.setInt(1, rsr.getInt("r_id"));
+				 ResultSet rs=statement.executeQuery();
+				 while(rs.next()) {
+						Users user = new Users();
+						user.setUid(rs.getInt("uid"));
+						user.setUname(rs.getString("uname"));
+						user.setUpwd(rs.getString("upwd"));
+						user.setUnickname(rs.getString("unickname"));
+						user.setUsex(rs.getString("usex"));
+						user.setUaddress(rs.getString("uaddress"));
+						user.setUdate(rs.getDate("udate"));
+						user.setUqq(rs.getString("uqq"));
+						user.setUedu(rs.getString("uedu"));
+						user.setUpic(rs.getString("upic"));
+						user.setUques(rs.getString("uques"));
+						user.setUrealname(rs.getString("urealname"));
+						user.setUremarks(rs.getString("uremarks"));
+						if(judgeGuanzhu(uid,user.getUid())==1) {
+							user.setiGtflag(1);
+						}else {
+							user.setiGtflag(0);
+						}
+						users.add(user);
+					}
+			 }
+			return users;
+		  } catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}	
+	}
+    //åˆ¤æ–­æˆ‘æ˜¯ä¸æ˜¯å…³æ³¨äº†å¯¹æ–¹
+	@Override
+	public int judgeGuanzhu(int uid, int gid) {
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+		//step1:sqlè¯­å¥
+		int flag = 0;
+		try{
+			 String sql="SELECT count(*) FROM relations where g_id=? and r_id=?";
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 statement.setInt(1,gid);
+			 statement.setInt(2,uid);
+			 ResultSet rs=statement.executeQuery();
+			while(rs.next()){
+				//1.è¯æ˜å¯¹æ–¹å·²ç»å…³æ³¨æˆ‘äº†
+				flag =rs.getInt(1);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}		
+		return flag;
+	}
 	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-//        IRelationsDao r=new RelationsDaoImpl();
-//        PageBean p=new PageBean();
-//        p=r.FindByPage("SELECT distinct g_id,(select count(*) from relations where g_id=b.g_id),(select uname from users where uid=b.g_id),(select udate from users where uid=b.g_id) FROM relations as b order by (select count(*) from relations where g_id=b.g_id) desc",1,5);
-//        List<Relations> l=p.getData();
-//        for (Relations relations : l) {
-//			List<Users> us=relations.getUselist();
-//			for (Users users : us) {
-//				System.out.println(users.getUname());
-//				
-//			}
-//			System.out.println("+++++++");
-//		}
+		RelationsDaoImpl rl = new RelationsDaoImpl();
+		System.out.println(rl.CountByAttention(1));
 	}
-
 }

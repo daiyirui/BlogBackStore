@@ -5,15 +5,15 @@ import java.util.Date;
 @SuppressWarnings("serial")
 public class Admins implements java.io.Serializable{
     private Integer aid;
-    private Integer a_pid;//���
+    private Integer a_pid;
     private String aname;
     private String apwd;
     private Date adate;
     private String arealname;
     private String asex;
     private String aremarks;
+    private Permissions permission = new Permissions();
    
-    
 	public Integer getAid() {
 		return aid;
 	}
@@ -62,10 +62,19 @@ public class Admins implements java.io.Serializable{
 	public void setAremarks(String aremarks) {
 		this.aremarks = aremarks;
 	}
+	
+	public Permissions getPermission() {
+		return permission;
+	}
+	public void setPermission(Permissions permission) {
+		this.permission = permission;
+	}
 	@Override
 	public String toString() {
-		return "Admins [aid=" + aid + ", a_pid=" + a_pid + ", aname=" + aname + ", apwd=" + apwd + ", adate=" + adate
-				+ ", arealname=" + arealname + ", asex=" + asex + ", aremarks=" + aremarks + "]";
+		return "Admins [aid=" + aid + ", a_pid=" + a_pid + ", aname=" + aname
+				+ ", apwd=" + apwd + ", adate=" + adate + ", arealname="
+				+ arealname + ", asex=" + asex + ", aremarks=" + aremarks
+				+ ", permissions=" + permission + "]";
 	}
 	
 }

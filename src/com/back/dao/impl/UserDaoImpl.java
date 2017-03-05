@@ -1,158 +1,291 @@
 package com.back.dao.impl;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.back.dao.IUserDao;
-import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
-import com.back.po.Users;
+import com.back.common.JDBCUtil;
+import com.microblog.dao.IUserDao;
+import com.microblog.dbutil.DBConn;
+import com.microblog.po.Users;
 
 public class UserDaoImpl implements IUserDao {
-    DBConn db;
+    DBConn db=null;
     public UserDaoImpl(){
-    	db=new DBConn();
+    	db=new DBConn();    	
     }
-	@Override
-	public PageBean FindUserByPage(String strSQL, int currentPage, int pageSize) {
-		// TODO Auto-generated method stub
-		//²½Öè1£º´´½¨Ò»¸öPageBean¶ÔÏó		
-		PageBean pb = new PageBean();
-		//²½Öè2£º´´½¨Ò»¸öSQLÓï¾ä£¬ÓÃÀ´»ñÈ¡emp±íÖĞ¼ÇÂ¼µÄ¸öÊı
-		String strSQL1 = strSQL;
-		strSQL1 = strSQL1.substring(strSQL1.toLowerCase().indexOf("from"));
-		strSQL1 = "select count(*) "+strSQL1;
-		//²½Öè3£ºÖ´ĞĞSQLÓï¾äµÃµ½½á¹û²¢½«½á¹û¸³Öµ¸øpb¶ÔÏóµÄtotalRows;
-		ResultSet rs = db.execQuery(strSQL1, new Object[]{});
-		try {
-			rs.next();			
-			pb.setTotalRows(rs.getInt(1));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			pb.setTotalRows(0);
-		}		
-		//²½Öè4£ºĞèÒªÎªpb¶ÔÏóµÄdataÊôĞÔ¸³Öµ,Ê×ÏÈ»ñÈ¡±¾Ò³µÄµÚÒ»ÌõÊı¾İµÄĞĞ±ê
-		int start = (currentPage-1)*pageSize;
-		//²½Öè5£º´´½¨¶¯Ì¬µÄSQLÓï¾ä
-		strSQL = strSQL+" limit ?,?";
-		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//²½Öè6£º½«»ñÈ¡µÄ½á¹û¼¯½øĞĞ·â×°
-		List<Users> lstUse = new ArrayList<Users>();
-		Users use=null;
-		try {
-			while(rs.next()){
-				use=new Users();
-				use.setUid(rs.getInt("uid"));
-				use.setUname(rs.getString("uname"));
-				use.setUpwd(rs.getString("upwd"));
-				use.setUnickname(rs.getString("unickname"));
-				use.setUsex(rs.getString("usex"));
-				use.setUaddress(rs.getString("uaddress"));
-				use.setUdate(rs.getString("udate"));
-				use.setUpic(rs.getString("upic"));
-				use.setUqq(rs.getString("uqq"));
-				use.setUedu(rs.getString("uedu"));
-				use.setUques(rs.getString("uques"));
-				use.setUrealname(rs.getString("urealname"));
-				use.setUremarks(rs.getString("uremarks"));
-				lstUse.add(use);				
+    @Override
+	public Users FindByMail(String uname,String uques) {
+    	String sql="SELECT * FROM users where  uname=? and uques=?";
+    	ResultSet rs=db.execQuery(sql, new Object[]{uname,uques});
+    	try {
+			if(rs.next()){
+				Users use=new Users();			  
+			    use.setUid(rs.getInt("uid"));
+			    use.setUname(rs.getString("uname"));
+			    use.setUpwd(rs.getString("upwd"));
+			    use.setUnickname(rs.getString("unickname"));
+			    use.setUsex(rs.getString("usex"));
+			    use.setUaddress(rs.getString("uaddress"));
+			    use.setUdate(rs.getDate("udate"));
+			    use.setUpic(rs.getString("upic"));   
+			    use.setUqq(rs.getString("uqq"));
+			    use.setUemail(rs.getString("uemail"));
+			    use.setUedu(rs.getString("uedu"));
+			    use.setUques(rs.getString("uques"));
+			    use.setUrealname(rs.getString("urealname"));
+			    use.setUremarks(rs.getString("uremarks"));
+			    return use;
+			}else{
+				return null;
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			return null;
 		} finally{
-			db.closeConn();	
-		}		
-		//²½Öè7£º½«»ñÈ¡µ½µÄ±¾Ò³Êı¾İ¸³Öµ¸øpb¶ÔÏóµÄdataÊôĞÔ
-		pb.setData(lstUse);		
-		//²½Öè8£ºÎªÆäÓàÊôĞÔ¸³Öµ,ÎŞĞèÎªtotalPages¸³Öµ£¬ÒÔÎªtotalRowsºÍpageSizeÒÑ¾­±»¸³Öµ
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);				
-		//²½Öè9£º½«·â×°ºÃµÄpb¶ÔÏó·µ»Ø
-		return pb;
-	}
-	@Override
-	public int DeleteUsers(int uid) {
-		// TODO Auto-generated method stub
-		String sql="delete from users where uid=?";
-		int a =db.execOther(sql, new Object[]{uid});		
-		return a;
-	}
-	@Override
-	public int StopUsers(int uid) {
-		// TODO Auto-generated method stub
-		String sql1="select * from users where uid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{uid});
-		int a=0;
-		try {
-			if(rs.next()){
-				//Ö¤Ã÷Ê×ÏÈ´ËÓÃ»§´æÔÚ£¬È»ºó²é¿´Æä±¸×¢ÊÇ·ñÒÑ¾­±»½ûÓÃÁË
-				if(rs.getString("uremarks")=="no"){
-					//Ö¤Ã÷ÒÑ¾­½ûÓÃ²ÅÓÃ»§ÁË
-					a= 0;
-				}else{
-					String sql="update users set uremarks='no' where uid=?";
-					a =db.execOther(sql, new Object[]{uid});				
-				}				
-			}			
-			return a;
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return 0;
-		}finally{
 			db.closeConn();
 		}		
 	}
+    @Override
+	public int UpdateUser(Users use) {		
+        String sql="update users set upwd=?,unickname=?,usex=?,uedu=?,uques=?,urealname=?,uremarks=?,uqq=?,udate=now(),upic=? where uid=? ";
+        int a =db.execOther(sql, new Object[]{use.getUpwd(),use.getUnickname(),use.getUsex(),use.getUedu(),use.getUques(),use.getUrealname()
+        		,use.getUremarks(),use.getUqq(),use.getUpic(),use.getUid()});    	
+		return a;
+	}	
+    
+    @Override
+	public int RegisterUser(Users use) {
+	    Connection connection = null;
+        PreparedStatement statement = null;
+        int  a = 0;
+        try {
+        	String sql="insert into users(uname,upwd,unickname,usex,uaddress,udate,uqq,uedu,urealname,uemail,uremarks) values(?,?,?,?,?,?,?,?,?,?,null)";
+            connection = JDBCUtil.getConn();
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, use.getUname());
+            statement.setString(2, use.getUpwd());
+            statement.setString(3, use.getUnickname());
+            statement.setString(4, use.getUsex());
+            statement.setString(5, use.getUaddress());
+            statement.setString(6, use.getUdate().toString());
+            statement.setString(7, use.getUqq());
+            statement.setString(8, use.getUedu());
+            statement.setString(9, use.getUrealname());
+            statement.setString(10, use.getUemail());
+            a=statement.executeUpdate();
+        } catch (SQLException e) {
+        	a=0;
+            e.printStackTrace();
+        } finally {
+            JDBCUtil.closeDB(connection, statement, null);
+        }
+        return a;
+    }
+    
 	@Override
-	public int LifeUsers(int uid) {
-		// TODO Auto-generated method stub
-		String sql1="select * from users where uid=?";
-		ResultSet rs=db.execQuery(sql1, new Object[]{uid});
-		int a=0;
+	public Users FindByObject(String uname, String upwd, String sex) {
+		String sql="SELECT * FROM users where  uname=? and upwd=? and usex=?";
+		ResultSet rs=db.execQuery(sql, new Object[]{uname,upwd,sex});
 		try {
 			if(rs.next()){
-				//Ö¤Ã÷Ê×ÏÈ´ËÓÃ»§´æÔÚ£¬È»ºó²é¿´Æä±¸×¢ÊÇ·ñÒÑ¾­±»½ûÓÃÁË
-				if(!rs.getString("uremarks").equals("no")){
-					//Ö¤Ã÷ÒÑ¾­½ûÓÃ²ÅÓÃ»§ÁË
-					a= 0;
-				}else{
-					String sql="update users set uremarks=null where uid=?";
-					a =db.execOther(sql, new Object[]{uid});				
-				}				
-			}			
-			return a;
+				Users use=new Users();			  
+			    use.setUid(rs.getInt("uid"));
+			    use.setUname(rs.getString("uname"));
+			    use.setUpwd(rs.getString("upwd"));
+			    use.setUnickname(rs.getString("unickname"));
+			    use.setUsex(rs.getString("usex"));
+			    use.setUaddress(rs.getString("uaddress"));
+			    use.setUdate(rs.getDate("udate"));
+			    use.setUpic(rs.getString("upic"));   
+			    use.setUqq(rs.getString("uqq"));
+			    use.setUedu(rs.getString("uedu"));
+			    use.setUemail(rs.getString("uemail"));
+			    use.setUques(rs.getString("uques"));
+			    use.setUrealname(rs.getString("urealname"));
+			    use.setUremarks(rs.getString("uremarks"));
+			    return use;
+			}else{
+				return null;
+			}
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return 0;
-		}finally{
+			return null;
+		} finally{
 			db.closeConn();
-		}
+		}		
+	}
+    @Override
+	public Users FindByuid(int uid) {
+    	  Connection connection = null;
+	      PreparedStatement statement = null;
+    	try {
+    		String sql="SELECT * FROM users where  uid=?";
+    		  connection = JDBCUtil.getConn();
+    	      statement = connection.prepareStatement(sql);
+    	      statement.setInt(1, uid);
+    	      ResultSet rs=statement.executeQuery();
+			if(rs.next()){
+				Users use=new Users();			  
+			    use.setUid(rs.getInt("uid"));
+			    use.setUname(rs.getString("uname"));
+			    use.setUpwd(rs.getString("upwd"));
+			    use.setUnickname(rs.getString("unickname"));
+			    use.setUsex(rs.getString("usex"));
+			    use.setUaddress(rs.getString("uaddress"));
+			    use.setUdate(rs.getDate("udate"));
+			    use.setUpic(rs.getString("upic"));   
+			    use.setUqq(rs.getString("uqq"));
+			    use.setUemail(rs.getString("uemail"));
+			    use.setUedu(rs.getString("uedu"));
+			    use.setUques(rs.getString("uques"));
+			    use.setUrealname(rs.getString("urealname"));
+			    use.setUremarks(rs.getString("uremarks"));
+			    return use;
+			}else{
+				return null;
+			}
+    	  }catch (SQLException e) {
+	            e.printStackTrace();
+	            return null;
+	        } finally {
+	            JDBCUtil.closeDB(connection, statement, null);
+	        }
 	}
 	@Override
-	public int DeleteMastUsers(String[] uidc) {
-		// TODO Auto-generated method stub
-		String sql="delete from users where uid in";
-		int a =db.execOther1(sql, uidc);
-		return a;
-	}
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-//        PageBean p=new PageBean();
-//        IUserDao u=new UserDaoImpl();
-//        p=u.FindUserByPage("select * from users", 1,6);
-//        System.out.println("count:"+p.getTotalRows()+" - "+p.getTotalPages());
-//        List<Users> l=p.getData();
-//        for (Users users : l) {
-//			System.out.println(users.getUname());
-//		}
+	public Users UserLoginCheck(String usn, String pwd) {
+		  Connection connection = null;
+	      PreparedStatement statement = null;
+		  Users use=null;
+	  try {
+	     //step1:åˆ›å»ºæŸ¥è¯¢æ•°æ®åº“sqlè¯­å¥
+		String sql="SELECT * FROM users where  uname=? and upwd=?";
+        connection = JDBCUtil.getConn();
+        statement = connection.prepareStatement(sql);
+        statement.setString(1, usn);
+        statement.setString(2, pwd);
+		//step3:è·å–æŸ¥è¯¢ç»“æœ
+        use=new Users();
+		ResultSet rs=statement.executeQuery();
+			//step5:è·å–ç»“æœå¯¹è±¡
+			if(rs.next()){
+			    use.setUid(rs.getInt("uid"));
+			    use.setUname(rs.getString("uname"));
+			    use.setUpwd(rs.getString("upwd"));
+			    use.setUnickname(rs.getString("unickname"));
+			    use.setUsex(rs.getString("usex"));
+			    use.setUaddress(rs.getString("uaddress"));
+			    use.setUdate(rs.getDate("udate"));
+			    use.setUpic(rs.getString("upic"));
+			    use.setUqq(rs.getString("uqq"));
+			    use.setUedu(rs.getString("uedu"));
+			    use.setUemail(rs.getString("uemail"));
+			    use.setUques(rs.getString("uques"));
+			    use.setUrealname(rs.getString("urealname"));
+			    use.setUremarks(rs.getString("uremarks"));
+			  } 
+	    }catch (SQLException e) {
+		            e.printStackTrace();
+		            return null;
+		        } finally {
+		            JDBCUtil.closeDB(connection, statement, null);
+		        }
+		       return use;
+	}	
+	//è·å–ç™»å½•è€…å…³æ³¨äººçš„ä¿¡æ¯
+	@Override
+	public List<Users> FindByInterest(int uid) {
+		 List<Users> users = null;
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+     	try {
+			String sql="SELECT * FROM users where  uid!=? and uid not in (select g_id from relations where r_id=?)";
+	        connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	        statement.setInt(1, uid);
+	        statement.setInt(2, uid);
+	         users = new ArrayList<Users>();
+			//step3:è·å–æŸ¥è¯¢ç»“æœ
+			ResultSet rs=statement.executeQuery();
+				while (rs.next()) {
+					//step6:è·å–ç»“æœå¯¹è±¡
+					Users	use=new Users();
+					use.setUid(rs.getInt("uid"));
+				    use.setUname(rs.getString("uname"));
+				    use.setUpwd(rs.getString("upwd"));
+				    use.setUnickname(rs.getString("unickname"));
+				    use.setUsex(rs.getString("usex"));
+				    use.setUaddress(rs.getString("uaddress"));
+				    use.setUdate(rs.getDate("udate"));
+				    use.setUpic(rs.getString("upic"));
+				    use.setUqq(rs.getString("uqq"));
+				    use.setUemail(rs.getString("uemail"));
+				    use.setUedu(rs.getString("uedu"));
+				    use.setUques(rs.getString("uques"));
+				    use.setUrealname(rs.getString("urealname"));
+				    use.setUremarks(rs.getString("uremarks"));
+				    use.setiGtflag(1);
+				    //ç»“åˆæ·»åŠ å¯¹è±¡
+				    users.add(use);
+				}
+				return users;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}	
 	}
 	
+	@Override
+	public List<Users> FindByListener() {
+		 String sql="SELECT * FROM users where uremarks!='no' order by uid limit 55";
+		 List<Users> users = null;
+		 Connection connection = null;
+		 PreparedStatement statement = null;
+     	try {
+	        connection = JDBCUtil.getConn();
+	        statement = connection.prepareStatement(sql);
+	         users = new ArrayList<Users>();
+			//step3:è·å–æŸ¥è¯¢ç»“æœ
+			ResultSet rs=statement.executeQuery();
+				while (rs.next()) {
+					//step6:è·å–ç»“æœå¯¹è±¡
+					Users	use=new Users();
+					use.setUid(rs.getInt("uid"));
+				    use.setUname(rs.getString("uname"));
+				    use.setUpwd(rs.getString("upwd"));
+				    use.setUnickname(rs.getString("unickname"));
+				    use.setUsex(rs.getString("usex"));
+				    use.setUaddress(rs.getString("uaddress"));
+				    use.setUdate(rs.getDate("udate"));
+				    use.setUpic(rs.getString("upic"));
+				    use.setUqq(rs.getString("uqq"));
+				    use.setUemail(rs.getString("uemail"));
+				    use.setUedu(rs.getString("uedu"));
+				    use.setUques(rs.getString("uques"));
+				    use.setUrealname(rs.getString("urealname"));
+				    use.setUremarks(rs.getString("uremarks"));
+				    use.settGiflag(1);
+				    //ç»“åˆæ·»åŠ å¯¹è±¡
+				    users.add(use);
+				}
+				return users;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}	
+	}		
+
+	public static void main(String[] args) {
+		IUserDao u=new UserDaoImpl();
+		List<Users> listUser=u.FindByListener();
+		System.out.println("s "+listUser.size());
+	}
 }

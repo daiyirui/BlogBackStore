@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*" pageEncoding="gbk"%>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -32,25 +32,25 @@
     <c:if test="${empty sessionScope.admins }">
        <div align="center">
        <div align="center">&nbsp;</div>
-       <a href="javascript:op()"><font size="10">ÇëÏÈµÇÂ½</font></a>
+       <a href="javascript:op()"><font size="10">è¯·å…ˆç™»é™†</font></a>
        </div>
     </c:if>
     <c:if test="${!empty sessionScope.admins }">
-        <h2>Welcome ${sessionScope.admins.permission.pname}:&nbsp;&nbsp; ${sessionScope.admins.aname},µÇÂ½!   </h2>
+        <h2>Welcome ${sessionScope.admins.permission.pname}:&nbsp;&nbsp; ${sessionScope.admins.aname},ç™»é™†!   </h2>
     <ul class="shortcut-buttons-set">
       <li><a class="shortcut-button" href="main_ShowOrders.jsp"><span> <img src="images/icons/pencil_48.png" alt="icon" /><br />
-      Î¢²©¹ÜÀí </span></a></li>
+      å¾®åšç®¡ç† </span></a></li>
       <li><a class="shortcut-button" href="main_AddProduct.jsp"><span> <img src="images/icons/paper_content_pencil_48.png" alt="icon" /><br /> 
-        ÆÀÂÛ¹ÜÀí </span></a></li>
+        è¯„è®ºç®¡ç† </span></a></li>
       <li><a class="shortcut-button" href="ShowImage.jsp"><span> <img src="images/icons/image_add_48.png" alt="icon" /><br />
-        ÊÕ²Ø¹ÜÀí</span></a></li>
-   <c:if test="${sessionScope.admins.permission.pname eq '¹ÜÀíÔ±'}">
+        æ”¶è—ç®¡ç†</span></a></li>
+   <c:if test="${sessionScope.admins.permission.pname eq 'ç®¡ç†å‘˜'}">
        <li><a href="AddEmp.jsp" class="shortcut-button"><span> <img src="images/icons/comment_48.png" alt="icon" /><br />
-      È¨ÏŞ¹ÜÀí</span></a></li>
+      æƒé™ç®¡ç†</span></a></li>
    </c:if>     
-   <c:if test="${sessionScope.admins.permission.pname eq 'ºóÌ¨ÓÃ»§'}">
+   <c:if test="${sessionScope.admins.permission.pname eq 'åå°ç”¨æˆ·'}">
        <li><a href="AddEmp.jsp" class="shortcut-button"><span> <img src="images/icons/clock_48.png" alt="icon" /><br />
-      ¹Ø×¢¶È±È½Ï</span></a></li>
+      å…³æ³¨åº¦æ¯”è¾ƒ</span></a></li>
    </c:if>    
     </ul>
     </c:if>
@@ -61,7 +61,7 @@
     <div class="content-box">
       <!-- Start Content Box -->
       <div class="content-box-header">
-        <h3>ÏµÍ³ĞÅÏ¢</h3>
+        <h3>ç³»ç»Ÿä¿¡æ¯</h3>
         <ul class="content-box-tabs">
           <!-- href must be unique and match the id of target div -->
         </ul>
@@ -74,15 +74,15 @@
           <table>
             <tbody>
               <tr>
-                <td>mysql°æ±¾</td>
+                <td>mysqlç‰ˆæœ¬</td>
                 <td><a href="#" title="title">6.0</a></td>
               </tr>
               <tr>
-                <td>·şÎñÆ÷°æ±¾</td>
+                <td>æœåŠ¡å™¨ç‰ˆæœ¬</td>
                 <td><a href="#" title="title">Apache-Tomcat-7.0.5</a></td>
               </tr>
               <tr>
-                <td>·şÎñÆ÷¶Ë¿Ú£º</td>
+                <td>æœåŠ¡å™¨ç«¯å£ï¼š</td>
                 <td>8686</td>
               </tr>
             </tbody>

@@ -1,16 +1,19 @@
 package com.back.dao;
 
-import com.back.filter.PageBean;
+import java.util.List;
+
+import com.back.po.Collection;
+
 
 public interface ICollectionDao {
-  //·ÖÒ³ÏÔÊ¾
-	public PageBean FindByPage(String strSQL,int currentPage,int pageSize);
-	//ÅúÁ¿É¾³ı
-	public int DeleteMastCollection(String[] uidc);
-	//µ¥¸öÉ¾³ı
-	public int DeleteCollection(int lid);
-	//½ûÓÃ
-	public int StopCollection(int lid);
-	//·´½ûÓÃ
-	public int LifeCollection(int lid);
+    //æ·»åŠ æ”¶è—
+	public int InsertCollection(Collection coll);
+	//è·å–æˆ‘æ‰€æœ‰æ”¶è—çš„å¾®åš
+	public List<Collection> FindCollectionByuid(int uid);
+	//delete å–æ¶ˆæ”¶è—
+	public int DeleteCollection(int uid,int wid);
+    //ç»Ÿè®¡ç™»é™†è€…æ”¶è—å¾®åšæ•°é‡
+	public int CountCollectionByUid(int uid);
+	//åˆ¤æ–­è¯¥å¾®åšæ˜¯å¦è¢«æˆ‘æ”¶è—äº†
+	public int judgeColletionBywid(int uid,int wid);
 }

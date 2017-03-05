@@ -1,159 +1,120 @@
 package com.back.dao.impl;
 
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.back.dao.ICommentDao;
-import com.back.dbutil.DBConn;
-import com.back.filter.PageBean;
-import com.back.po.Comment;
-import com.back.po.Users;
-import com.back.po.Weibo;
-
+import com.back.common.JDBCUtil;
+import com.microblog.dao.ICommentDao;
+import com.microblog.po.Comment;
+import com.microblog.po.Users;
 public class CommentDaoImpl implements ICommentDao {
-    DBConn db;
-	public CommentDaoImpl() {
-		// TODO Auto-generated constructor stub
-		db=new DBConn();
-	}
 
 	@Override
-	public PageBean FindByPage(String strSQL, int currentPage, int pageSize) {
-		//²½Öè1£º´´½¨Ò»¸öPageBean¶ÔÏó		
-		PageBean pb = new PageBean();
-		//²½Öè2£º´´½¨Ò»¸öSQLÓï¾ä£¬ÓÃÀ´»ñÈ¡emp±íÖĞ¼ÇÂ¼µÄ¸öÊı
-		String strSQL1 = strSQL;
-		strSQL1 = strSQL1.substring(strSQL1.toLowerCase().indexOf("from"));
-		strSQL1 = "select count(*) "+strSQL1;
-		//²½Öè3£ºÖ´ĞĞSQLÓï¾äµÃµ½½á¹û²¢½«½á¹û¸³Öµ¸øpb¶ÔÏóµÄtotalRows;
-		ResultSet rs = db.execQuery(strSQL1, new Object[]{});
-		try {
-			rs.next();			
-			pb.setTotalRows(rs.getInt(1));
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}		
-		//²½Öè4£ºĞèÒªÎªpb¶ÔÏóµÄdataÊôĞÔ¸³Öµ,Ê×ÏÈ»ñÈ¡±¾Ò³µÄµÚÒ»ÌõÊı¾İµÄĞĞ±ê
-		int start = (currentPage-1)*pageSize;
-		//²½Öè5£º´´½¨¶¯Ì¬µÄSQLÓï¾ä
-		strSQL = strSQL+" limit ?,?";
-		rs = db.execQuery(strSQL, new Object[]{start,pageSize});
-		//²½Öè6£º½«»ñÈ¡µÄ½á¹û¼¯½øĞĞ·â×°
-		List<Comment> lstComment = new ArrayList<Comment>();
-		Comment comm=null;
-		try {
-			while(rs.next()){
-				comm=new Comment();
-				comm.setCid(rs.getInt("cid"));
-				comm.setCcontent(rs.getString("ccontent"));
-				comm.setCdate(rs.getString("cdate"));
-				comm.setCremarks(rs.getString("cremarks"));
-//				comm.setCimages(rs.getString("cimages"));
-				String s="";
-				if(rs.getString("cimages")!=null){
-					s=rs.getString("cimages").replaceAll("/Microblog/","");
-					comm.setCimages(s);
-				}else{
-					comm.setCimages(rs.getString("cimages"));
-				}
-				comm.setC_uid(rs.getInt("c_uid"));
-				comm.setC_wid(rs.getInt("c_wid"));			
-				ResultSet re=db.execQuery("SELECT * FROM users where uid=?", new Object[]{rs.getInt("c_uid")});
-				if(re.next()){
-					    Users use=new Users();
-					    use.setUid(re.getInt("uid"));
-					    use.setUname(re.getString("uname"));
-					    use.setUpwd(re.getString("upwd"));
-					    use.setUnickname(re.getString("unickname"));
-					    use.setUsex(re.getString("usex"));
-					    use.setUaddress(re.getString("uaddress"));
-					    use.setUdate(re.getString("udate"));
-					    use.setUpic(re.getString("upic"));
-					    use.setUqq(re.getString("uqq"));
-					    use.setUedu(re.getString("uedu"));
-					    use.setUques(re.getString("uques"));
-					    use.setUrealname(re.getString("urealname"));					    
-					    use.setUremarks(re.getString("uremarks"));
-					    comm.setUse(use);
-				}
-				re=db.execQuery("SELECT * FROM weibo where wid=?", new Object[]{rs.getInt("c_wid")});
-				if(re.next()){
-					Weibo weibo=new Weibo();		
-					weibo.setWid(re.getInt("wid"));
-					weibo.setWcontent(re.getString("wcontent"));
-					weibo.setWdate(re.getString("wdate"));
-					weibo.setWimage(re.getString("wimage"));
-					weibo.setWtimes(re.getInt("wtimes"));
-					weibo.setWremarks(re.getString("wremarks"));
-					weibo.setWcountcomment(re.getInt("wcountcomment"));
-					weibo.setW_uid(re.getInt("w_uid"));
-					re=db.execQuery("SELECT * FROM users where uid=?", new Object[]{re.getInt("w_uid")});
-					if(re.next()){
-						    Users use=new Users();
-						    use.setUid(re.getInt("uid"));
-						    use.setUname(re.getString("uname"));
-						    use.setUpwd(re.getString("upwd"));
-						    use.setUnickname(re.getString("unickname"));
-						    use.setUsex(re.getString("usex"));
-						    use.setUaddress(re.getString("uaddress"));
-						    use.setUdate(re.getString("udate"));
-						    use.setUpic(re.getString("upic"));
-						    use.setUqq(re.getString("uqq"));
-						    use.setUedu(re.getString("uedu"));
-						    use.setUques(re.getString("uques"));
-						    use.setUrealname(re.getString("urealname"));
-						    use.setUremarks(re.getString("uremarks"));
-						    weibo.setUse(use);
-					   }
-					comm.setWeibo(weibo);
-				}				
-				lstComment.add(comm);
-			}
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally{
-			db.closeConn();	
-		}		
-		//²½Öè7£º½«»ñÈ¡µ½µÄ±¾Ò³Êı¾İ¸³Öµ¸øpb¶ÔÏóµÄdataÊôĞÔ
-		pb.setData(lstComment);		
-		//²½Öè8£ºÎªÆäÓàÊôĞÔ¸³Öµ,ÎŞĞèÎªtotalPages¸³Öµ£¬ÒÔÎªtotalRowsºÍpageSizeÒÑ¾­±»¸³Öµ
-		pb.setCurrentPage(currentPage);
-		pb.setPageSize(pageSize);				
-		//²½Öè9£º½«·â×°ºÃµÄpb¶ÔÏó·µ»Ø
-		return pb;
+	public List<Comment> findByComment(int c_wid) {
+		//step5:åˆ›å»ºListç»“åˆå¯¹è±¡
+				List<Comment> comments=new ArrayList<Comment>();
+				Connection connection = null;
+			    PreparedStatement statement = null;
+			   try {
+					String sql="SELECT * FROM comment where c_wid= ?";
+					connection = JDBCUtil.getConn();
+			        statement = connection.prepareStatement(sql);
+			        statement.setInt(1, c_wid);
+			        ResultSet rs = statement.executeQuery();
+					//step6:éå†ç»“æœé›†
+						while (rs.next()) {
+						   Comment comment=new Comment();		
+						   comment.setCid(rs.getInt("cid"));
+						   comment.setC_uid(rs.getInt("c_uid"));
+						   comment.setC_wid(rs.getInt("c_wid"));
+						   comment.setCcontent(rs.getString("ccontent"));
+						   comment.setCdate(rs.getString("cdate"));
+						   comment.setCimages(rs.getString("cimages"));
+						   comment.setCremarks(rs.getString("cremarks"));
+						   comment.setC_cid(rs.getInt("c_cid"));
+						   comment.setFlag(rs.getInt("flag"));
+						   sql = "SELECT * FROM users where uid=?";
+						   statement = connection.prepareStatement(sql);
+						   statement.setInt(1, rs.getInt("c_uid"));
+						   ResultSet re=statement.executeQuery();
+						   if(re.next()){
+							    Users use=new Users();
+							    use.setUid(re.getInt("uid"));
+							    use.setUname(re.getString("uname"));
+							    use.setUpwd(re.getString("upwd"));
+							    use.setUnickname(re.getString("unickname"));
+							    use.setUsex(re.getString("usex"));
+							    use.setUaddress(re.getString("uaddress"));
+							    use.setUdate(re.getDate("udate"));
+							    use.setUpic(re.getString("upic"));
+							    use.setUqq(re.getString("uqq"));
+							    use.setUedu(re.getString("uedu"));
+							    use.setUques(re.getString("uques"));
+							    use.setUrealname(re.getString("urealname"));
+							    use.setUremarks(re.getString("uremarks"));
+							    comment.setUse(use);
+						   }
+						   //step6:æ·»åŠ åˆ°listé›†åˆ
+						   comments.add(comment);
+						}
+			   } catch (SQLException e) {
+		           e.printStackTrace();
+		           return null;
+		       } finally {
+		           JDBCUtil.closeDB(connection, statement, null);
+		       }
+			   return comments;
+	}
+	
+	//æ’å…¥è¯„è®º
+	@Override
+	public int InsertComment(Comment comm) {
+		  Connection connection = null;
+	       PreparedStatement statement = null;
+	       int  a = 0;
+	        try {
+	        	String sql="insert into comment(c_wid,c_uid,ccontent,cdate,cremarks,cimages,c_cid,flag) values(?,?,?,now(),null,?,?,0)";
+	            connection = JDBCUtil.getConn();
+	            statement = connection.prepareStatement(sql);
+	            statement.setInt(1, comm.getC_wid());
+	            statement.setInt(2, comm.getC_uid());
+	            statement.setString(3, comm.getCcontent());
+	            statement.setString(4, comm.getCimages());
+	            statement.setInt(5, comm.getC_cid());
+	            a=statement.executeUpdate();
+	        } catch (SQLException e) {
+	        	a=0;
+	            e.printStackTrace();
+	        } finally {
+	            JDBCUtil.closeDB(connection, statement, null);
+	        }
+	        System.out.println(a);
+		return a;
 	}
 
 	@Override
 	public int DeleteComment(int cid) {
-		// TODO Auto-generated method stub
-		String sql="delete from comment where cid=?";
-		int a =db.execOther(sql, new Object[]{cid});
+		 Connection connection = null;
+	       PreparedStatement statement = null;
+         int a = 0;
+         try {
+      	   connection = JDBCUtil.getConn();
+             String sql = "update comment set flag = 1 where cid=?";
+             System.out.println(sql);
+             statement = connection.prepareStatement(sql);
+             statement.setInt(1, cid);
+             a=statement.executeUpdate();
+         } catch (SQLException e) {
+             e.printStackTrace();
+         } finally {
+             JDBCUtil.closeDB(connection, statement, null);
+         }
 		return a;
 	}
-
-	@Override
-	public int DeleteMastComment(String[] cids) {
-		// TODO Auto-generated method stub
-		String sql="delete from comment where cid in";
-		int a =db.execOther1(sql, cids);
-		return a;
-	}
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-//        ICommentDao c=new CommentDaoImpl();
-//        PageBean p=new PageBean();
-//        p=c.FindByPage("SELECT * FROM comment",1,3);
-//        List<Comment> l=p.getData();
-//        for (Comment comment : l) {
-//			System.out.println(comment.getWeibo().getWcontent());
-//		}        
-	}
+  
 }

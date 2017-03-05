@@ -28,16 +28,12 @@ this.doPost(request, response);
 	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		response.setContentType("text/html");
-		request.setCharacterEncoding("gbk");
-		//»ñÈ¡Ç°Ì¨Ò³Ãæ±íµ¥ÐÅÏ¢
 		String aname=request.getParameter("aname").trim();
 		String apwd=request.getParameter("apwd").trim();
 		int a_pid=Integer.parseInt(request.getParameter("a_pid"));
 		String asex=request.getParameter("asex").trim();
         String arealname=request.getParameter("arealname").trim();
         String aremarks=request.getParameter("aremarks").trim();
-        //·â×°ÊµÌåÀà
         Admins admin=new Admins(); 
         admin.setA_pid(a_pid);
         admin.setAname(aname);
@@ -47,29 +43,28 @@ this.doPost(request, response);
         admin.setAsex(asex);
         HttpSession session=request.getSession();
         PageBean pb=new PageBean();
-    	//¶¨Òå·ÖÒ³²ÎÊý
     	int pagesize=Integer.parseInt(this.getServletConfig().getInitParameter("pagesize"));
     	int nowpage=request.getParameter("np")!=null?Integer.parseInt(request.getParameter("np")):1;
         IAdminBiz adminBiz=new AdminBizImpl();
         if(request.getParameter("ap")!=null){
-        	//Ö´ÐÐupdate
+        	//Ö´ï¿½ï¿½update
         	int aid=Integer.parseInt(request.getParameter("aid"));
         	admin.setAid(aid);
         	if(adminBiz.UpdateAdmins(admin)){
         		pb=adminBiz.SelectAdminsList(nowpage, pagesize);
     	    	session.setAttribute("AdminsList",pb);
-    	    	response.getWriter().printf("<script>alert('¸üÐÂºóÌ¨ÓÃ»§"+aname+"³É¹¦!');location.href='show_admins.jsp'</script>");
+    	    	response.getWriter().printf("<script>alert('ï¿½ï¿½ï¿½Âºï¿½Ì¨ï¿½Ã»ï¿½"+aname+"ï¿½É¹ï¿½!');location.href='show_admins.jsp'</script>");
         	}else{
-        		response.getWriter().printf("<script>alert('¸üÐÂºóÌ¨ÓÃ»§Ê§°Ü!');location.href='udpateadmins.jsp'</script>");
+        		response.getWriter().printf("<script>alert('ï¿½ï¿½ï¿½Âºï¿½Ì¨ï¿½Ã»ï¿½Ê§ï¿½ï¿½!');location.href='udpateadmins.jsp'</script>");
         	}
         }else{
-        	//Ö´ÐÐinsert²Ù×÷
+        	//Ö´ï¿½ï¿½insertï¿½ï¿½ï¿½ï¿½
             if(adminBiz.AddAdmins(admin)){            	
     	    	pb=adminBiz.SelectAdminsList(nowpage, pagesize);
     	    	session.setAttribute("AdminsList",pb);
-    	    	response.getWriter().printf("<script>alert('Ìí¼ÓºóÌ¨ÓÃ»§"+aname+"³É¹¦!');location.href='show_admins.jsp'</script>");
+    	    	response.getWriter().printf("<script>alert('ï¿½ï¿½Óºï¿½Ì¨ï¿½Ã»ï¿½"+aname+"ï¿½É¹ï¿½!');location.href='show_admins.jsp'</script>");
             }else{
-            	response.getWriter().printf("<script>alert('Ìí¼ÓºóÌ¨ÓÃ»§Ê§°Ü!');location.href='addadmins.jsp'</script>");
+            	response.getWriter().printf("<script>alert('ï¿½ï¿½Óºï¿½Ì¨ï¿½Ã»ï¿½Ê§ï¿½ï¿½!');location.href='addadmins.jsp'</script>");
             }        	
         }
         

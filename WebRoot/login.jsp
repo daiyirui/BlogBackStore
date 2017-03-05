@@ -1,10 +1,10 @@
-<%@ page language="java" import="java.util.*" pageEncoding="gbk"%>
+<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jstl/core_rt" prefix="c"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN""http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=gb2312" />
-<title>Î¢²©ÏµÍ³ºóÌ¨-µÇÂ½½çÃæ | Sign In by www.865171.cn</title>
+<title>å¾®åšç³»ç»Ÿåå°-ç™»é™†ç•Œé¢ | Sign In by www.865171.cn</title>
 <link rel="stylesheet" href="css/reset.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/invalid.css" type="text/css" media="screen" />
@@ -21,20 +21,21 @@
     <a href="#"><img id="logo" src="images/log.png" alt="Benben.com Admin logo" /></a> </div>
   <!-- End #logn-top -->
   <div id="login-content">
-    <form action="AdminLoginServlet" method="post">
+    <form action="AdminServlet" method="post">
+     <input name="action" type="hidden" value="login" />
       <p>
-        <label>ÓÃ»§Ãû</label>
+        <label>ç”¨æˆ·å</label>
         <input class="text-input" name="aname" type="text" />
       </p>
       <div class="clear"></div>
       <p>
-        <label>ÃÜ&nbsp;&nbsp;&nbsp;&nbsp;Âë</label>
+        <label>å¯†&nbsp;&nbsp;&nbsp;&nbsp;ç </label>
         <input class="text-input" name="apwd" type="password" />&nbsp;	 </p>
       
       
       <div class="clear"></div>
       <p>
-        <input class="button" type="submit" value="µÇÂ½" />
+        <input class="button" type="submit" value="ç™»é™†" />
       </p>
     </form>
   </div>
