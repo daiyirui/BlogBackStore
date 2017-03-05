@@ -110,35 +110,14 @@
 						<a class="button" href="javascript:;"
 							onclick="SetReverseChecked('chkDeptnos');return false;">反选</a>
 						<input type="button" onclick="muckdel()" name="btnBatch" id="btnBatch" class="button" value="批量删除"/>
-                                       
-                   <div class="pagination"> 
-               共${sessionScope.WeiboList.totalRows}微博信息&nbsp;&nbsp;&nbsp;当前第${sessionScope.WeiboList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  	<c:if test="${sessionScope.WeiboList.currentPage > 1}">
-                      <a href="ListWeiboServlet" title="First Page">&laquo; First</a>
-                      <a href="ListWeiboServlet?np=${sessionScope.WeiboList.currentPage - 1}"  title="Previous Page">&laquo; Previous</a> 
-                    </c:if>
-                      <c:forEach var="i" begin="1" end="${sessionScope.WeiboList.totalPages }">
-                    	<c:if test="${sessionScope.WeiboList.currentPage == i}">
-                        	<a href="#" class="number current" title="${i }">${i }</a> 
-                        </c:if>
-                    	<c:if test="${sessionScope.WeiboList.currentPage != i}"> 
-                    		<a href="ListWeiboServlet?np=${i }" class="number" title="${i }">${i }</a>
-                        </c:if>
-                	  </c:forEach>
-                      <c:if test="${sessionScope.WeiboList.currentPage < sessionScope.WeiboList.totalPages}">
-                      <a href="ListWeiboServlet?np=${sessionScope.WeiboList.currentPage + 1}" 
-                      	 title="Next Page">Next &raquo;</a>
-                      <a href="ListWeiboServlet?np=${sessionScope.WeiboList.totalPages}" 
-                      	 title="Last Page">Last &raquo;</a>
-                      </c:if>
-                  </div>                  
+               
                   <!-- End .pagination -->
                   <div class="clear"></div>                </td>
               </tr>
             </tfoot>
             <tbody>
-             <c:if test="${!empty sessionScope.WeiboList}">
-               <c:forEach items="${sessionScope.WeiboList.data}" var="weibo">
+             <c:if test="${!empty WeiboList}">
+               <c:forEach items="${WeiboList}" var="weibo">
                <c:if test="${weibo.wremarks eq 'no'}">
                  <tr style="background-color: #CC66FF; ">
                </c:if>

@@ -131,27 +131,7 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
         			<input class="button" type="button" name="btnBatch" id="btnBatch" value="批量删除" onclick="return checkBatchDel('chkOrdersnos');" />
                 </td>
                 <td colspan="4">
-                  <div class="pagination"> <!-- collectionList -->
-                共${sessionScope.collectionList.totalRows}评论信息&nbsp;&nbsp;&nbsp;当前第${sessionScope.collectionList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  	<c:if test="${sessionScope.collectionList.currentPage > 1}">
-                      <a href="ListCollectionServlet" title="First Page">&laquo; First</a>
-                      <a href="ListCollectionServlet?np=${sessionScope.collectionList.currentPage - 1}"  title="Previous Page">&laquo; Previous</a> 
-                    </c:if>
-                      <c:forEach var="i" begin="1" end="${sessionScope.collectionList.totalPages }">
-                    	<c:if test="${sessionScope.collectionList.currentPage == i}">
-                        	<a href="#" class="number current" title="${i }">${i }</a> 
-                        </c:if>
-                    	<c:if test="${sessionScope.collectionList.currentPage != i}"> 
-                    		<a href="ListCollectionServlet?np=${i }" class="number" title="${i }">${i }</a>
-                        </c:if>
-                	  </c:forEach>
-                      <c:if test="${sessionScope.collectionList.currentPage < sessionScope.collectionList.totalPages}">
-                      <a href="ListCollectionServlet?np=${sessionScope.collectionList.currentPage + 1}" 
-                      	 title="Next Page">Next &raquo;</a>
-                      <a href="ListCollectionServlet?np=${sessionScope.collectionList.totalPages}" 
-                      	 title="Last Page">Last &raquo;</a>
-                      </c:if>
-                  </div>
+               
                   <!-- End .pagination -->
                   <div class="clear">
                   </div>
@@ -159,8 +139,8 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
               </tr>
             </tfoot>
             <tbody>
-         <c:if test="${!empty sessionScope.collectionList }">
-           <c:forEach items="${sessionScope.collectionList.data}" var="coll">
+         <c:if test="${!empty collectionList }">
+           <c:forEach items="${collectionList}" var="coll">
              <c:if test="${coll.lremarks eq 'no'}">
                <tr style="background-color: #CC66FF;">
              </c:if>

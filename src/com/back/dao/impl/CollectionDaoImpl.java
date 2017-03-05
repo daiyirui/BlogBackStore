@@ -8,98 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.back.common.JDBCUtil;
-import com.microblog.dao.ICollectionDao;
-import com.microblog.po.Collection;
-import com.microblog.po.Users;
+import com.back.dao.ICollectionDao;
+import com.back.po.Collection;
+import com.back.po.Users;
 
 public class CollectionDaoImpl implements ICollectionDao {
-
-	@Override
-	public int InsertCollection(Collection coll) {
-		 Connection connection = null;
-	       PreparedStatement statement = null;
-	       int  a = 0;
-	        try {
-	        	String sql="insert into collection(l_uid,lcontent,ldate,limages,lremarks,l_wid) values(?,?,now(),?,null,?)";
-	            connection = JDBCUtil.getConn();
-	            statement = connection.prepareStatement(sql);
-	            statement.setInt(1, coll.getL_uid());
-	            statement.setString(2, coll.getLcontent());
-	            statement.setString(3, coll.getLimages());
-	            statement.setInt(4, coll.getL_wid());
-	            a=statement.executeUpdate();
-	        } catch (SQLException e) {
-	        	a=0;
-	            e.printStackTrace();
-	        } finally {
-	            JDBCUtil.closeDB(connection, statement, null);
-	        }
-		return a;
-	}
-
-
-	@Override
-	public int DeleteCollection(int uid,int wid) {
-		 Connection connection = null;
-	       PreparedStatement statement = null;
-         int a = 0;
-         try {
-      	   connection = JDBCUtil.getConn();
-             String sql = "DELETE FROM collection where l_uid=? and l_wid=?";
-             System.out.println(sql);
-             statement = connection.prepareStatement(sql);
-             statement.setInt(1, uid);
-             statement.setInt(2, wid);
-             a=statement.executeUpdate();
-         } catch (SQLException e) {
-             e.printStackTrace();
-         } finally {
-             JDBCUtil.closeDB(connection, statement, null);
-         }
-		return a;
-	}
-
-	
-
-	@Override
-	public int CountCollectionByUid(int uid) {
-		Connection connection = null;
-	    PreparedStatement statement = null;
-		int count=0;
-		try {
-			//step1： sql语句
-			String sql="SELECT count(*) FROM collection where  l_uid=?";	
-			connection = JDBCUtil.getConn();
-	        statement = connection.prepareStatement(sql);
-	        statement.setInt(1, uid);
-			//step3:获取返回值结果集
-			ResultSet rs=statement.executeQuery();
-			//step4:int 变量
-			if(rs.next()){
-				//step6:遍历结果集
-				count=rs.getInt(1);
-			}			 
-		} catch (SQLException e) {
-	           e.printStackTrace();
-	       } finally {
-	           JDBCUtil.closeDB(connection, statement, null);
-	       }
-		return count;
-	}
-
     //获取登录用户的所有收藏
 	@Override
-	public List<Collection> FindCollectionByuid(int uid) {
+	public List<Collection> FindAllCollection() {
 		List<Collection> collections=new ArrayList<Collection>();
 		Connection connection = null;
 	    PreparedStatement statement = null;
 	    try {
-			String sql="SELECT * FROM collection where l_uid=? order by ldate desc";
+			String sql="SELECT * FROM collection  order by ldate desc";
 			connection = JDBCUtil.getConn();
 	        statement = connection.prepareStatement(sql);
-	        statement.setInt(1, uid);
-	        System.out.println("uid:"+uid);
-	        System.out.println("sql:"+sql);
 	        ResultSet rs = statement.executeQuery();
 			//step6:遍历结果集
 				while (rs.next()) {
@@ -142,35 +65,5 @@ public class CollectionDaoImpl implements ICollectionDao {
 	   return collections;
 	}
 
-    //判断该微博是否被我收藏了
-	@Override
-	public int judgeColletionBywid(int uid, int wid) {
-		System.out.println("uid"+uid);
-		System.out.println("wid"+wid);
-		Connection connection = null;
-	    PreparedStatement statement = null;
-		int count=0;
-		try {
-			//step1： sql语句
-			String sql="SELECT count(*) FROM collection where  l_uid=? and l_wid =?";	
-			connection = JDBCUtil.getConn();
-	        statement = connection.prepareStatement(sql);
-	        statement.setInt(1, uid);
-	        statement.setInt(2, wid);
-			//step3:获取返回值结果集
-			ResultSet rs=statement.executeQuery();
-			//step4:int 变量
-			if(rs.next()){
-				//step6:遍历结果集
-				count=rs.getInt(1);
-			}			 
-		} catch (SQLException e) {
-	           e.printStackTrace();
-	       } finally {
-	           JDBCUtil.closeDB(connection, statement, null);
-	       }
-		return count;
-	}
-
-   
+  
 }

@@ -104,8 +104,8 @@
     <servlet-class>com.back.servlet.MustDeleteCommentServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>ListWeiboServlet</servlet-name>
-    <servlet-class>com.back.servlet.ListWeiboServlet</servlet-class>
+    <servlet-name>WeiboServlet</servlet-name>
+    <servlet-class>com.back.servlet.WeiboServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>EditWeiboServlet</servlet-name>
@@ -140,8 +140,8 @@
     <servlet-class>com.back.servlet.AddHotblogServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>ListCollectionServlet</servlet-name>
-    <servlet-class>com.back.servlet.ListCollectionServlet</servlet-class>
+    <servlet-name>CollectionServlet</servlet-name>
+    <servlet-class>com.back.servlet.CollectionServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>MastDeleteCollectionServlet</servlet-name>
@@ -240,8 +240,8 @@
     <url-pattern>/MustDeleteCommentServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>ListWeiboServlet</servlet-name>
-    <url-pattern>/ListWeiboServlet</url-pattern>
+    <servlet-name>WeiboServlet</servlet-name>
+    <url-pattern>/WeiboServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>EditWeiboServlet</servlet-name>
@@ -276,8 +276,8 @@
     <url-pattern>/AddHotblogServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
-    <servlet-name>ListCollectionServlet</servlet-name>
-    <url-pattern>/ListCollectionServlet</url-pattern>
+    <servlet-name>CollectionServlet</servlet-name>
+    <url-pattern>/CollectionServlet</url-pattern>
   </servlet-mapping>
   <servlet-mapping>
     <servlet-name>MastDeleteCollectionServlet</servlet-name>

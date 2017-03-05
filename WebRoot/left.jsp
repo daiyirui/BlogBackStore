@@ -59,12 +59,12 @@ function opep(){
         </li>
         <li> <a href="#" class="nav-top-item"> 微博管理 </a>
           <ul>
-            <li><a href="ListWeiboServlet" target="main">微博列表</a></li>
+            <li><a href="WeiboServlet?action=listWeibo" target="main">微博列表</a></li>
           </ul>
         </li>
         <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="ListRelationServlet" target="main">关注度列表</a></li>
+            <li><a href="RelationServlet?action=listRelation" target="main">关注度列表</a></li>
             
     
           </ul>
@@ -72,13 +72,13 @@ function opep(){
         <li> <a href="#" class="nav-top-item"> 微博热议 </a>
           <ul>
           <li><a href="addhotblog.jsp" target="main">添加微博热议</a></li>
-            <li><a href="ListBlogHotServlet" target="main">微博热议列表</a></li>
+            <li><a href="BlogHotServlet?action=listBlogHot" target="main">微博热议列表</a></li>
           </ul>
         </li>
       
         	 <li> <a href="#" class="nav-top-item"> 收藏管理 </a>
           <ul>
-            <li><a href="ListCollectionServlet" target="main">收藏列表</a></li>
+            <li><a href="CollectionServlet?action=listCollection" target="main">收藏列表</a></li>
           </ul>
         </li>       
       </ul>
@@ -94,17 +94,17 @@ function opep(){
        
         <li> <a href="#" class="nav-top-item"> 评论管理 </a>
           <ul>
-            <li><a href="ListCommentServlet" target="main">评论列表</a></li>
+            <li><a href="CommentServlet?actin=listComment" target="main">评论列表</a></li>
           </ul>
         </li>
         <li> <a href="#" class="nav-top-item"> 微博管理 </a>
           <ul>
-            <li><a href="ListWeiboServlet" target="main">微博列表</a></li>
+            <li><a href="WeiboServlet?action=listWeibo" target="main">微博列表</a></li>
           </ul>
         </li>
         <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="ListRelationServlet" target="main">关注度列表</a></li>
+            <li><a href="RelationServlet?action=listRelation" target="main">关注度列表</a></li>
             
     
           </ul>
@@ -112,7 +112,7 @@ function opep(){
         
         	 <li> <a href="#" class="nav-top-item"> 收藏管理 </a>
           <ul>
-            <li><a href="ListCollectionServlet" target="main">收藏列表</a></li>
+            <li><a href="CollectionServlet?action=listCollection" target="main">收藏列表</a></li>
           </ul>
         </li>       
       </ul>
