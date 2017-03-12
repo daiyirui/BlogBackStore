@@ -73,10 +73,6 @@
                   <c:if test="${rel.rstate==0}">
                      <td>µ¥Ïò¹Ø×¢</td>  
                   </c:if>                         
-                <td>
-                  <!-- Icons -->
-                  <a href="SelectRelationDetailServlet?gid=${rel.g_id}" title="Edit"><img src="images/icons/tick_circle.png" alt="Edit" /></a> 
-                </td>
               </tr>
              </c:forEach>
            </c:if>

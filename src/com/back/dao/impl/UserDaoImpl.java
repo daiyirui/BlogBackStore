@@ -92,4 +92,24 @@ public class UserDaoImpl implements IUserDao {
 		return use;
 	}
 
+	@Override
+	public int DeleteUser(int uid) {
+		String sql = "delete  FROM users where uid=?";
+		Connection connection = null;
+		PreparedStatement statement = null;
+		int count = 0;
+		try {
+			connection = JDBCUtil.getConn();
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, uid);
+			count = statement.executeUpdate();
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return 0;
+		} finally {
+			JDBCUtil.closeDB(connection, statement, null);
+		}
+		return count;
+	}
+
 }

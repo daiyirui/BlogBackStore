@@ -12,4 +12,6 @@ public interface IUserDao {
 	public List<Users> FindAllUsers();
 	//通过User id查找用户
 	public Users FindUsersById(Integer uid);
+	//删除某个用户
+	public int DeleteUser(int uid);
 }

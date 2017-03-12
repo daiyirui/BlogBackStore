@@ -161,16 +161,7 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
                 <td align="center">${use.uqq}</td>
                 <td align="center"> <img src="${use.upic}" width="40" height="40" /></td>               
                 <td align="center">
-              <c:if test="${use.uremarks eq 'no'}">
-                <a href="javascript:if(confirm('确定反禁用${use.uname}吗?')==true){location='EditUserServlet?eid=1&uid=${use.uid}';}" title="Update"><!-- 禁用用户 -->
-                    	<img src="images/icons/hammer_screwdriver.png" alt="Edit" /></a>&nbsp;
-              </c:if>
-              <c:if test="${use.uremarks ne 'no'}">
-                <a href="javascript:if(confirm('确定禁用${use.uname}吗?')==true){location='EditUserServlet?eid=2&uid=${use.uid}';}" title="Update"><!-- 禁用用户 -->
-                    	<img src="images/icons/hammer_screwdriver.png" alt="Edit" /></a>&nbsp;
-              </c:if>
-               		 
-                	<a href="javascript:if(confirm('确定删除${use.uname}吗?')==true){location='EditUserServlet?did=1&uid=${use.uid}';}" title="Delete">
+                	<a href="javascript:if(confirm('确定删除${use.uname}吗?')==true){location='UserServlet?action=deleteUser&uid=${use.uid}';}" title="Delete">
                     	<img src="images/icons/cross.png" alt="Delete"/></a>
                 </td>
               </tr> 
