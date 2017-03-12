@@ -16,7 +16,6 @@ import com.back.po.Bloghot;
 import com.back.po.Collection;
 
 public class HotblogServlet extends HttpServlet {
-
 	/**
 	 * 
 	 */

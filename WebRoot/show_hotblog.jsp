@@ -222,11 +222,26 @@ body{font-family:ËÎÌå; font-size:12px; padding:0px; margin:0px;}
         		  <c:if test="${hot.bstate==1}">ÔÚÏß×´Ì¬ </c:if>
         		  <c:if test="${hot.bstate!=1}">ÏÂÏß×´Ì¬ </c:if>
         		</td>
-        		<td align="center">${hot.btitle} ${hot.bimages}</td>
+	        	<td align="center">${hot.btitle} 
+	                  <c:if test="${hot.bimages ne null}">
+	                    <a href="javascript:poe('${hot.bimages}')">µã»÷Í¼Æ¬</a>
+	                  </c:if>
+	                  <c:if test="${hot.bimages eq null}">
+	                                                     ÎÞÎ¢²©Í¼Æ¬
+	                  </c:if>
+	             </td>
  	    		<td align="center">
 	 	    		   <table>
 		                      <c:forEach items="${hot.bitems}" var="bitem">
-		                           <tr><td>${bitem.bitemName}</td><td>${bitem.bitemimage}</td><td>${bitem.bvote}</td></tr>
+		                           <tr><td>${bitem.bitemName}</td>
+		                           <td> 
+		                           <c:if test="${bitem.bitemimage ne null}">
+	                      <a href="javascript:poe('${bitem.bitemimage}')">µã»÷Í¼Æ¬</a>
+	                       </c:if>
+	                   <c:if test="${bitem.bitemimage eq null}">
+	                                                        ÎÞÎ¢²©Í¼Æ¬
+	                     </c:if>
+	                  </td><td>${bitem.bvote}</td></tr>
 		                      </c:forEach> 
 	                    </table>   
  	    		</td>	    	
