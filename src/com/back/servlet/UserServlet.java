@@ -12,23 +12,31 @@ import com.back.dao.IUserDao;
 import com.back.dao.impl.UserDaoImpl;
 import com.back.po.Users;
 
-@SuppressWarnings("serial")
-public class MastDeleteUserServlet extends HttpServlet {
-
+public class UserServlet extends HttpServlet {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-        this.doPost(request, response);
+         this.doPost(request, response);
 	}
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String[] uidc=request.getParameterValues("chkOrdersnos");
-		IUserDao userDao = new UserDaoImpl();
-		for(int i = 0;i<uidc.length;i++) {
-			userDao.DeleteUser(Integer.parseInt(uidc[i]));
+		String action = request.getParameter("action");
+		if("deleteUser".equals(action)) {
+			deleteUser(request,response);
 		}
+	}
+	private void deleteUser(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		String uid = request.getParameter("uid");
+		IUserDao userDao = new UserDaoImpl();
+		
+		userDao.DeleteUser(Integer.parseInt(uid));
 		List<Users> UsersList = userDao.FindAllUsers();
 	    request.setAttribute("UsersList",UsersList);
 		request.getRequestDispatcher("./show_users.jsp").forward(request, response);
-			
 	}
 }

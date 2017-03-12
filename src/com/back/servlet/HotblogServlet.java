@@ -9,11 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.back.dao.IBollhotDao;
-import com.back.dao.ICollectionDao;
 import com.back.dao.impl.BollhotDaoImpl;
-import com.back.dao.impl.CollectionDaoImpl;
 import com.back.po.Bloghot;
-import com.back.po.Collection;
 
 public class HotblogServlet extends HttpServlet {
 	/**
