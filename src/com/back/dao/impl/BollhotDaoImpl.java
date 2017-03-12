@@ -2,33 +2,17 @@ package com.back.dao.impl;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import com.back.common.JDBCUtil;
-import com.microblog.dao.IBollhotDao;
-import com.microblog.dbutil.DBConn;
-import com.microblog.po.Bloghot;
-import com.microblog.po.Bloghotitem;
+import com.back.po.Bloghot;
+import com.back.po.Bloghotitem;
 
 
-public class BollhotDaoImpl implements IBollhotDao {
-    DBConn db=null;
-    public BollhotDaoImpl(){
-    	db=new DBConn();
-    }
-
-
-	@Override
-	public int VoitHot(String hot) {
-		// TODO Auto-generated method stub
-		String sql="update bloghot set bvote=bvote+1 where bstate=1 and bitems=?";
-		int a=db.execOther(sql, new Object[]{hot});
-		return a;
-	}
-	
+public class BollhotDaoImpl implements com.back.dao.IBollhotDao {
+   
 	@Override
 	public List<Bloghot> FindAllHot() {
 		Connection conn = null;
@@ -36,7 +20,6 @@ public class BollhotDaoImpl implements IBollhotDao {
         ResultSet rs = null;
         String sql="SELECT * FROM bloghot where bstate=1 order by bvote desc";
 		List<Bloghot> litHot=new ArrayList<Bloghot>();
-				
 		conn = JDBCUtil.getConn();
 	        try {
 	            stat = conn.createStatement();
@@ -52,26 +35,22 @@ public class BollhotDaoImpl implements IBollhotDao {
 					hot.setBitems(FindAllHotItem(rs.getInt("bid")));
 					litHot.add(hot);
 				}
-	            System.out.println(litHot);
 				return litHot;
 	        } catch (Exception e) {
 	            e.printStackTrace();
+	            return null;
 	        } finally {
 	            JDBCUtil.closeDB(conn, stat, rs);
-	            return litHot;
 	        }
-		
 	}
-	
 	public List<Bloghotitem> FindAllHotItem(Integer bid) {
 		Connection conn = null;
         Statement stat = null;
         ResultSet rs = null;
         String sql="SELECT * FROM bloghotitem where bid="+bid;
 		List<Bloghotitem> bloghotitems=new ArrayList<Bloghotitem>();
-				
 		conn = JDBCUtil.getConn();
-	        try {
+	    try {
 	            stat = conn.createStatement();
 	            rs = stat.executeQuery(sql);
 	            while (rs.next()) {
@@ -87,9 +66,9 @@ public class BollhotDaoImpl implements IBollhotDao {
 				return bloghotitems;
 	        } catch (Exception e) {
 	            e.printStackTrace();
+	            return null;
 	        } finally {
 	            JDBCUtil.closeDB(conn, stat, rs);
-	            return bloghotitems;
-	        }
-	}
+	   }
+  }
 }

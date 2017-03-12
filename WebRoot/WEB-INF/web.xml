@@ -162,6 +162,15 @@
   </servlet-mapping>
   
   
+  <servlet>
+    <servlet-name>HotblogServlet</servlet-name>
+    <servlet-class>com.back.servlet.HotblogServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>HotblogServlet</servlet-name>
+    <url-pattern>/HotblogServlet</url-pattern>
+  </servlet-mapping>
+  
    <servlet>
     <servlet-name>RelationsServlet</servlet-name>
     <servlet-class>com.back.servlet.RelationsServlet</servlet-class>

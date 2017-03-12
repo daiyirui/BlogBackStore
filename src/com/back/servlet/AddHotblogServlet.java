@@ -8,9 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.back.biz.IHotBlogBiz;
-import com.back.biz.impl.HotBlogBizImpl;
-import com.back.filter.PageBean;
 import com.back.po.Bloghot;
 
 @SuppressWarnings("serial")
@@ -55,12 +52,12 @@ public class AddHotblogServlet extends HttpServlet {
 			HttpSession session=request.getSession();
 			PageBean pb=new PageBean();
 			pb=hotBiz.SelectByPage();
-			//¶¨Òå·ÖÒ³²ÎÊý
+			//ï¿½ï¿½ï¿½ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½
 	    	int pagesize=Integer.parseInt(this.getServletConfig().getInitParameter("pagesize"));	    	
 	    	session.setAttribute("HotBlogList",pb);
 			session.setAttribute("totalpageh", pb.getData().size());
 			session.setAttribute("currentpageh",pagesize);
-			response.getWriter().printf("<script>alert('Ìí¼ÓÎ¢²©ÈÈÒé³É¹¦');location.href='show_hotblog.jsp'</script>");
+			response.getWriter().printf("<script>alert('ï¿½ï¿½ï¿½Î¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½');location.href='show_hotblog.jsp'</script>");
 		}else{
 			response.getWriter().printf("<script>alert('"+msg+"');location.href='addhotblog.jsp'</script>");
 		}

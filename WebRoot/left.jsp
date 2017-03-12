@@ -72,7 +72,7 @@ function opep(){
         <li> <a href="#" class="nav-top-item"> 微博热议 </a>
           <ul>
           <li><a href="addhotblog.jsp" target="main">添加微博热议</a></li>
-            <li><a href="BlogHotServlet?action=listBlogHot" target="main">微博热议列表</a></li>
+            <li><a href="HotblogServlet?action=listBlogHot" target="main">微博热议列表</a></li>
           </ul>
         </li>
       

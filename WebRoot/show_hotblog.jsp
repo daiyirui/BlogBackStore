@@ -213,47 +213,25 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
                 <td align="center" bgcolor="lavender">操作</td>                
               </tr>
             </thead>
-            <tfoot>
-              <tr>
-              	<td colspan="3">
-                	&nbsp;&nbsp;
-                </td>
-                <td colspan="3" align="right">
-                  <div class="pagination"> 
-           <input type="hidden" size="1" readonly="readonly" value="${sessionScope.currentpageh}" id="curr" />
-      共<input type="text" size="1" readonly="readonly" value="${sessionScope.totalpageh}" id="sum" />微博热议&nbsp;&nbsp;&nbsp;
-      当前第<input type="text" size="1" readonly="readonly" value="1" id="hid" />页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;        
-             <a href="javascript:page('f')" title="First Page">&laquo; First</a>
-             <a href="javascript:page('c')"  title="Previous Page">&laquo; Previous</a> 
-             <a href="javascript:page('n')"  title="Next Page">Next &raquo;</a>
-             <a href="javascript:page('e')" title="Last Page">Last &raquo;</a>     
-                  </div>
-                  <!-- End .pagination -->
-                  <div class="clear">
-                  </div>
-                </td>
-              </tr>
-            </tfoot>
             <tbody>
-        <c:if test="${!empty sessionScope.HotBlogList}">
-          <c:forEach items="${sessionScope.HotBlogList.data}" var="hot" varStatus="su">
-             <c:if test="${su.count <= sessionScope.currentpageh}">
-                <tr id="${su.count}" style="display: block;">                
+        <c:if test="${!empty hotBlogList}">
+          <c:forEach items="${hotBlogList}" var="hot" >
+                <tr>                
                 <td align="center">${hot.bid}</td>
         		<td align="center">
         		  <c:if test="${hot.bstate==1}">在线状态 </c:if>
         		  <c:if test="${hot.bstate!=1}">下线状态 </c:if>
         		</td>
-        		<td align="center">${hot.btitle}</td>
+        		<td align="center">${hot.btitle} ${hot.bimages}</td>
  	    		<td align="center">
-                   <c:forEach items="${hot.item}" var="ite">
-                       ${ite }<br/>
-                   </c:forEach>    
+	 	    		   <table>
+		                      <c:forEach items="${hot.bitems}" var="bitem">
+		                           <tr><td>${bitem.bitemName}</td><td>${bitem.bitemimage}</td><td>${bitem.bvote}</td></tr>
+		                      </c:forEach> 
+	                    </table>   
  	    		</td>	    	
                 <td align="center">
-                   <c:forEach items="${hot.vote}" var="vot">
-                       ${vot}<br/>
-                   </c:forEach>
+                       ${hot.bvote}<br/>
                 </td>                
                 <td align="center">${hot.bremarks}</td>               
                 <td align="center">
@@ -270,7 +248,6 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
                     	<img src="images/icons/cross.png" alt="Delete"/></a>
                 </td>
               </tr>
-             </c:if>
              
              <c:if test="${su.count > sessionScope.currentpageh}">
                 <tr id="${su.count}" style="display: none;">                
@@ -309,9 +286,6 @@ body{font-family:宋体; font-size:12px; padding:0px; margin:0px;}
           </c:forEach>
         </c:if>
                 
-              
-              
-              
             <!-- forEach -->
             
             
