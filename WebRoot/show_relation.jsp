@@ -46,36 +46,14 @@
             <thead>
               <tr>
                 <th>关注编号</th>
-                <th>关注人数</th>
-                <th>关注用户</th>
-                <th>用户注册时间</th>                
-                <th>关注详细</th>
+                <th>关注者</th>
+                <th>被关注者</th>
+                <th>关注状态</th>                
               </tr>
             </thead>
             <tfoot>
               <tr>
                 <td colspan="6">
-               <div class="pagination">
-               共${sessionScope.relationList.totalRows}前台用户&nbsp;&nbsp;&nbsp;当前第${sessionScope.relationList.currentPage}页&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  	<c:if test="${sessionScope.relationList.currentPage > 1}">
-                      <a href="ListRelationServlet" title="First Page">&laquo; First</a>
-                      <a href="ListRelationServlet?np=${sessionScope.relationList.currentPage - 1}"  title="Previous Page">&laquo; Previous</a> 
-                    </c:if>
-                      <c:forEach var="i" begin="1" end="${sessionScope.relationList.totalPages }">
-                    	<c:if test="${sessionScope.relationList.currentPage == i}">
-                        	<a href="#" class="number current" title="${i }">${i }</a> 
-                        </c:if>
-                    	<c:if test="${sessionScope.relationList.currentPage != i}"> 
-                    		<a href="ListRelationServlet?np=${i }" class="number" title="${i }">${i }</a>
-                        </c:if>
-                	  </c:forEach>
-                      <c:if test="${sessionScope.relationList.currentPage < sessionScope.relationList.totalPages}">
-                      <a href="ListRelationServlet?np=${sessionScope.relationList.currentPage + 1}" 
-                      	 title="Next Page">Next &raquo;</a>
-                      <a href="ListRelationServlet?np=${sessionScope.relationList.totalPages}" 
-                      	 title="Last Page">Last &raquo;</a>
-                      </c:if>
-                  </div>
                  
                   <!-- End .pagination -->
                   <div class="clear"></div>
@@ -83,13 +61,18 @@
               </tr>
             </tfoot>
             <tbody>
-           <c:if test="${!empty sessionScope.relationList}">
-             <c:forEach items="${sessionScope.relationList.data}" var="rel" varStatus="su">
+           <c:if test="${!empty relationList}">
+             <c:forEach items="${relationList}" var="rel" >
                 <tr>
-                <td>${su.count}</td>
-                <td>${rel.usertimes}</td>
-                <td>${rel.use.uname}</td>
-                <td>${rel.use.udate}</td>                
+                <td>${rel.rid}</td>
+                <td>${rel.ridUser.uname}</td>
+                <td>${rel.gidUser.uname}</td>
+                 <c:if test="${rel.rstate==1}">
+                     <td>双向关注</td>  
+                  </c:if>   
+                  <c:if test="${rel.rstate==0}">
+                     <td>单向关注</td>  
+                  </c:if>                         
                 <td>
                   <!-- Icons -->
                   <a href="SelectRelationDetailServlet?gid=${rel.g_id}" title="Edit"><img src="images/icons/tick_circle.png" alt="Edit" /></a> 

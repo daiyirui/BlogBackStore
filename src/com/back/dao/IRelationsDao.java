@@ -2,6 +2,7 @@ package com.back.dao;
 
 import java.util.List;
 
+import com.back.po.Relations;
 import com.back.po.Users;
 
 
@@ -22,4 +23,6 @@ public interface IRelationsDao {
 	public List<Users> FindAllMyFansByuid(int uid);
 	//判断我是不是关注了对方
 	public int judgeGuanzhu(int uid,int gid);
+    //显示登录者关注人的数量
+	public List<Relations> FindAllRelations();
 }

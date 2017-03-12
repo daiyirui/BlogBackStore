@@ -8,11 +8,43 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.back.common.JDBCUtil;
-import com.microblog.dao.IRelationsDao;
-import com.microblog.po.Users;
+import com.back.dao.IRelationsDao;
+import com.back.dao.IUserDao;
+import com.back.po.Relations;
+import com.back.po.Users;
 
 public class RelationsDaoImpl implements IRelationsDao {
 	
+	@Override
+	public List<Relations> FindAllRelations() {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		 List<Relations> relationsList = null;
+		 String sql="SELECT * FROM relations";
+		 try{
+			 connection = JDBCUtil.getConn();
+			 statement = connection.prepareStatement(sql);
+			 ResultSet rs=statement.executeQuery();
+			 relationsList = new ArrayList<Relations>();
+			 while(rs.next()){
+				 Relations relations = new Relations();
+				 relations.setRid(rs.getInt("rid"));
+				 relations.setR_id(rs.getInt("r_id"));
+				 relations.setG_id(rs.getInt("g_id"));
+				 relations.setRstate(rs.getInt("rstate"));
+				 IUserDao userDao = new UserDaoImpl();
+				 relations.setRidUser(userDao.FindUsersById(rs.getInt("r_id")));
+				 relations.setGidUser(userDao.FindUsersById(rs.getInt("g_id")));
+				 relationsList.add(relations);
+			 }
+			return relationsList;
+		  } catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}finally{
+			JDBCUtil.closeDB(connection, statement, null);
+		}	
+	}
 	@SuppressWarnings("resource")
 	@Override
 	public int DeleteRelationByuid(int uid, int gid) {
@@ -321,4 +353,5 @@ public class RelationsDaoImpl implements IRelationsDao {
 		RelationsDaoImpl rl = new RelationsDaoImpl();
 		System.out.println(rl.CountByAttention(1));
 	}
+
 }

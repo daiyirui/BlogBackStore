@@ -161,6 +161,15 @@
     <url-pattern>/AdminServlet</url-pattern>
   </servlet-mapping>
   
+  
+   <servlet>
+    <servlet-name>RelationsServlet</servlet-name>
+    <servlet-class>com.back.servlet.RelationsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>RelationsServlet</servlet-name>
+    <url-pattern>/RelationsServlet</url-pattern>
+  </servlet-mapping>
 
 
   <servlet-mapping>

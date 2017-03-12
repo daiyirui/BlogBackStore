@@ -64,7 +64,7 @@ function opep(){
         </li>
         <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="RelationServlet?action=listRelation" target="main">关注度列表</a></li>
+            <li><a href="RelationsServlet?action=listRelation" target="main">关注度列表</a></li>
             
     
           </ul>
@@ -104,7 +104,7 @@ function opep(){
         </li>
         <li> <a href="#" class="nav-top-item"> 好友关注度比较 </a>
           <ul>
-            <li><a href="RelationServlet?action=listRelation" target="main">关注度列表</a></li>
+            <li><a href="RelationsServlet?action=listRelation" target="main">关注度列表</a></li>
             
     
           </ul>
