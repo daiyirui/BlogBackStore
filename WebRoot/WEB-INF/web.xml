@@ -136,8 +136,8 @@
     <servlet-class>com.back.servlet.EditHotblogServlet</servlet-class>
   </servlet>
   <servlet>
-    <servlet-name>AddHotblogServlet</servlet-name>
-    <servlet-class>com.back.servlet.AddHotblogServlet</servlet-class>
+    <servlet-name>HotblogServlet</servlet-name>
+    <servlet-class>com.back.servlet.HotblogServlet</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>CollectionServlet</servlet-name>
@@ -301,10 +301,7 @@
     <servlet-name>EditHotblogServlet</servlet-name>
     <url-pattern>/EditHotblogServlet</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AddHotblogServlet</servlet-name>
-    <url-pattern>/AddHotblogServlet</url-pattern>
-  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>CollectionServlet</servlet-name>
     <url-pattern>/CollectionServlet</url-pattern>

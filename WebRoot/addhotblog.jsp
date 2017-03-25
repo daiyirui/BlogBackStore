@@ -17,6 +17,7 @@
 <script type="text/javascript">
   function savehot(){
     var s=document.getElementById("for");
+    
     if(confirm("确认新增微博热议?")){
       s.submit();
     }
@@ -42,30 +43,40 @@
       <!-- End .content-box-header -->
       <div class="content-box-content"><!-- End #tab1 -->
         <div class="tab-content" style="display:block;">
-          <form id="for" action="AddHotblogServlet" method="post">
+          <form id="for" action="HotblogServlet?action=insertBlogHot" method="post" enctype="multipart/form-data">
             <fieldset>
             <!-- Set class to "column-left" or "column-right" on fieldsets to divide the form into columns -->
             <table>
             	<tr>
             		<td style="width: 200px;"><label>微博热议标题</label></td>
             		<td style="width: 1000px;"><input class="text-input small-input" type="text" id="small-input" name="btitle" />
+                    <span>附加图片</span>  <input  type="file" name="blogHotUpfile" value="" /> 
               <span class="input-notification success png_bg" style="display: none;">Successful message</span></td>
             	</tr>
             	<tr>
             		<td><label>热议items：</label><br/>最多5项</td>
             		<td> 
-            		<input class="text-input small-input" id="small-input" name="bitems0" /><br/>
-            		<input class="text-input small-input"  id="small-input" name="bitems1" /><br/>
-            		<input class="text-input small-input" id="small-input" name="bitems2" /><br/>
-            		<input class="text-input small-input"  id="small-input" name="bitems3" /><br/>
-            		<input class="text-input small-input"  id="small-input" name="bitems4" /><br/>
+            		<input class="text-input small-input" id="small-input" name="bitems0" />
+            		<span>附加图片</span> <input  type="file" name="itemUpfile0" value="" /> 
+            		<br/>
+            		<input class="text-input small-input"  id="small-input" name="bitems1" />
+            		<span>附加图片</span> <input  type="file" name="itemUpfile1" value="" /> 
+            		<br/>
+            		<input class="text-input small-input" id="small-input" name="bitems2" />
+            		<span>附加图片</span> <input  type="file" name="itemUpfile2" value="" /> 
+            		<br/>
+            		<input class="text-input small-input"  id="small-input" name="bitems3" />
+            		<span>附加图片</span> <input  type="file" name="itemUpfile3" value="" /> 
+            		<br/>
+            		<input class="text-input small-input"  id="small-input" name="bitems4" />
+            		<span>附加图片</span> <input  type="file" name="itemUpfile4" value="" /> 
+            		<br/>
                             </td>
             	</tr>            	
             	           
             	<tr>
-            		<td><label>是否上线</label></td>
-            		<td><input  type="checkbox" value="1"  name="bstate" />
-                  若选中则变为上线状态</td>
+            		<td><label>上线</label><input  type="checkbox" value="1"  name="bstate" />  </td>
+            		<td><label>下线</label><input  type="checkbox" value="0"  name="bstate" /> </td>
             	</tr>
             	<tr>
             		<td><label>备注</label></td>
