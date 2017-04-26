@@ -27,10 +27,7 @@
     </filter-mapping>
   
   
-  <servlet>
-    <servlet-name>AddPermissionServlet</servlet-name>
-    <servlet-class>com.back.servlet.AddPermissionServlet</servlet-class>
-  </servlet>
+  
   <servlet>
     <servlet-name>PermissionListServlet</servlet-name>
     <servlet-class>com.back.servlet.PermissionListServlet</servlet-class>
@@ -51,10 +48,7 @@
     <servlet-name>IntoBackUserServlet</servlet-name>
     <servlet-class>com.back.servlet.IntoBackUserServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>AddBackUserServlet</servlet-name>
-    <servlet-class>com.back.servlet.AddBackUserServlet</servlet-class>
-  </servlet>
+ 
   <servlet>
     <servlet-name>ListAdminsServlet</servlet-name>
     <servlet-class>com.back.servlet.ListAdminsServlet</servlet-class>
@@ -63,10 +57,7 @@
     <servlet-name>UpdateAdminServlet</servlet-name>
     <servlet-class>com.back.servlet.UpdateAdminServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>DeleteAdminServlet</servlet-name>
-    <servlet-class>com.back.servlet.DeleteAdminServlet</servlet-class>
-  </servlet>
+  
   <servlet>
     <servlet-name>AdminLoginServlet</servlet-name>
     <servlet-class>com.back.servlet.AdminLoginServlet</servlet-class>
@@ -95,10 +86,7 @@
     <servlet-name>CommentServlet</servlet-name>
     <servlet-class>com.back.servlet.CommentServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>DeleteCommentServlet</servlet-name>
-    <servlet-class>com.back.servlet.DeleteCommentServlet</servlet-class>
-  </servlet>
+  
   <servlet>
     <servlet-name>MustDeleteCommentServlet</servlet-name>
     <servlet-class>com.back.servlet.MustDeleteCommentServlet</servlet-class>
@@ -135,10 +123,7 @@
     <servlet-name>EditHotblogServlet</servlet-name>
     <servlet-class>com.back.servlet.EditHotblogServlet</servlet-class>
   </servlet>
-  <servlet>
-    <servlet-name>HotblogServlet</servlet-name>
-    <servlet-class>com.back.servlet.HotblogServlet</servlet-class>
-  </servlet>
+ 
   <servlet>
     <servlet-name>CollectionServlet</servlet-name>
     <servlet-class>com.back.servlet.CollectionServlet</servlet-class>
@@ -193,10 +178,7 @@
 
 
 
-  <servlet-mapping>
-    <servlet-name>AddPermissionServlet</servlet-name>
-    <url-pattern>/AddPermissionServlet</url-pattern>
-  </servlet-mapping>
+ 
   <servlet-mapping>
     <servlet-name>PermissionListServlet</servlet-name>
     <url-pattern>/PermissionListServlet</url-pattern>
@@ -217,10 +199,7 @@
     <servlet-name>IntoBackUserServlet</servlet-name>
     <url-pattern>/IntoBackUserServlet</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>AddBackUserServlet</servlet-name>
-    <url-pattern>/AddBackUserServlet</url-pattern>
-  </servlet-mapping>
+  
   <servlet-mapping>
     <servlet-name>ListAdminsServlet</servlet-name>
     <url-pattern>/ListAdminsServlet</url-pattern>
@@ -229,10 +208,7 @@
     <servlet-name>UpdateAdminServlet</servlet-name>
     <url-pattern>/UpdateAdminServlet</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>DeleteAdminServlet</servlet-name>
-    <url-pattern>/DeleteAdminServlet</url-pattern>
-  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>AdminLoginServlet</servlet-name>
     <url-pattern>/AdminLoginServlet</url-pattern>
@@ -261,10 +237,7 @@
     <servlet-name>CommentServlet</servlet-name>
     <url-pattern>/CommentServlet</url-pattern>
   </servlet-mapping>
-  <servlet-mapping>
-    <servlet-name>DeleteCommentServlet</servlet-name>
-    <url-pattern>/DeleteCommentServlet</url-pattern>
-  </servlet-mapping>
+
   <servlet-mapping>
     <servlet-name>MustDeleteCommentServlet</servlet-name>
     <url-pattern>/MustDeleteCommentServlet</url-pattern>
