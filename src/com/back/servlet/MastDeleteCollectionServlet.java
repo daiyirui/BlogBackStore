@@ -1,6 +1,7 @@
 package com.back.servlet;
 
 import java.io.IOException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -9,6 +10,8 @@ import javax.servlet.http.HttpSession;
 
 import com.back.biz.ICollectionBiz;
 import com.back.biz.impl.CollectionBizImpl;
+import com.back.dao.ICollectionDao;
+import com.back.dao.impl.CollectionDaoImpl;
 import com.back.filter.PageBean;
 
 @SuppressWarnings("serial")
@@ -28,30 +31,21 @@ this.doPost(request, response);
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		response.setContentType("text/html");
-		request.setCharacterEncoding("gbk");//chkOrdersnos
+		request.setCharacterEncoding("gbk");
+		ICollectionDao colBiz=new CollectionDaoImpl();
 		String[] idc=request.getParameterValues("chkOrdersnos");
+		for(int i = 0;i<uidc.length;i++) {
+			colBiz.DeleteUser(Integer.parseInt(uidc[i]));
+		}
 		HttpSession session=request.getSession();
-		ICollectionBiz colBiz=new CollectionBizImpl();
-    	//¶¨Òå·ÖÒ³²ÎÊý
-    	int pagesize=Integer.parseInt(this.getServletConfig().getInitParameter("pagesize"));
-    	int nowpage=request.getParameter("np")!=null?Integer.parseInt(request.getParameter("np")):1;
-    	PageBean pb=new PageBean();    	
+		
     		if(colBiz.DeleteMastCollection(idc)){
-    			pb=colBiz.SelectByPage(nowpage, pagesize);
     			session.setAttribute("collectionList",pb);
-    	    	response.getWriter().printf("<script>alert('ÅúÁ¿É¾³ý"+idc.length+"ÆÀÂÛÐÅÏ¢³É¹¦!');location.href='show_collection.jsp'</script>");		
+    	    	response.getWriter().printf("<script>alert('ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½"+idc.length+"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢ï¿½É¹ï¿½!');location.href='show_collection.jsp'</script>");		
     		}else{
-    			response.getWriter().printf("<script>alert('ÆÀÂÛÅúÁ¿É¾³ýÊ§°Ü!');location.href='show_collection.jsp'</script>");
+    			response.getWriter().printf("<script>alert('ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¾ï¿½ï¿½Ê§ï¿½ï¿½!');location.href='show_collection.jsp'</script>");
     		}
 	}
 
-	/**
-	 * Initialization of the servlet. <br>
-	 *
-	 * @throws ServletException if an error occurs
-	 */
-	public void init() throws ServletException {
-		// Put your code here
-	}
-
+	
 }

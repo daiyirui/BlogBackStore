@@ -32,9 +32,71 @@ public class AdminServlet extends HttpServlet {
 		 }else if("listAdmins".equals(action)) {
 			 listAdmins(request,response);
 			 //跳转到个人信息修改页面
+		 }else if("modifyInfoPre".equals(action)){
+			 modifyInfoPre(request,response);
+			 //修改管理员信息
+		 }else if("modifyInfo".equals(action)) {
+			 modifyInfo(request,response);
+			 //增加管理员
+		 }else if("addAdmin".equals(action)) {
+			 addAdmin(request,response);
+			 //跳转增加管理员界面
+		 }else if("addAdminPre".equals(action)){
+			 addAdminPre(request,response);
+			 //删除管理员操作
+		 }else if("deleteAdmin".equals(action)) {
+			 deleteAdmin(request,response);
 		 }
+		 
 	}
 	
+	/**
+	 * 删除管理员操作
+	 * @param request
+	 * @param response
+	 */
+	private void deleteAdmin(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+	}
+	/**
+	 * 跳转增加管理员界面
+	 * @param request
+	 * @param response
+	 * @throws IOException 
+	 * @throws ServletException 
+	 */
+	private void addAdminPre(HttpServletRequest request,
+			HttpServletResponse response) throws ServletException, IOException {
+		request.getRequestDispatcher("addadmins.jsp").forward(request, response);
+	}
+	/**
+	 * 增加管理员
+	 * @param request
+	 * @param response
+	 */
+	private void addAdmin(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+	}
+	/**
+	 * 修改管理员自己的信息
+	 * @param request
+	 * @param response
+	 */
+	private void modifyInfo(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+	}
+	/**
+	 * 跳转到修改管理员信息界面
+	 * @param request
+	 * @param response
+	 */
+	private void modifyInfoPre(HttpServletRequest request,
+			HttpServletResponse response) {
+		
+	}
 	private void listAdmins(HttpServletRequest request,
 			HttpServletResponse response) throws ServletException, IOException {
 		IAdminDao admindao = new AdminDaoImpl();

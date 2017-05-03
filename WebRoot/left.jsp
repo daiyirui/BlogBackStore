@@ -47,7 +47,7 @@ function opep(){
         <li> <a href="#" class="nav-top-item"> 后台用户管理 </a>
           <ul>
             <li><a href="AdminServlet?action=listAdmins" target="main">后台用户列表</a></li>
-            <li><a href="IntoBackUserServlet" target="main">添加后台用户</a></li>
+            <li><a href="AdminServlet?action=addAdminPre" target="main">添加后台用户</a></li>
              <li><a href="PermissionListServlet" target="main">后台权限列表</a></li>
              <li><a href="addpermission.jsp" target="main">后台权限添加</a></li>
           </ul>

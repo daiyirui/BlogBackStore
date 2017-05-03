@@ -89,7 +89,6 @@ function insertform(){
             </table>
             <p>
               <input class="button" onclick="insertform()" type="button" value="添加后台用户" />&nbsp;&nbsp;&nbsp;&nbsp;
-              <a href="mustaddadmins.jsp">批量导入后台用户</a> 
                           </p>
             </fieldset>
             <div class="clear"></div>
